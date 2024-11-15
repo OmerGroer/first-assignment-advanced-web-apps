@@ -6,7 +6,7 @@ const getAllPosts = async (req, res) => {
 };
 
 const getPostById = async (req, res) => {
-  cconsole.log("get post by id");
+  console.log("get post by id");
   res.send("get post by id");
 };
 
