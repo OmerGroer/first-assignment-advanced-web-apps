@@ -8,3 +8,45 @@ content-type: application/json
     "sender": "Omer", 
     "content": "Welcome back to me weekly podcast"
 }
+
+###
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+###
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+###
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "", 
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+###
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "sender": "", 
+    "content": "Welcome back to me weekly podcast"
+}
