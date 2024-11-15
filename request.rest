@@ -1,7 +1,7 @@
-###
+### Get Post by id
 
 GET http://localhost:3000/posts/6737231dc4d25584d014a6a8
 
-###
+### Post id does not exist
 
 GET http://localhost:3000/posts/6737231dc4d25584d014a6a7
