@@ -1,8 +1,12 @@
 const PostModel = require("../models/postsModel");
 
 const getAllPosts = async (req, res) => {
-  console.log("get all posts");
-  res.send("get all posts");
+  try {
+    const posts = await PostModel.find();
+    res.send(posts);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
 };
 
 const getPostById = async (req, res) => {
