@@ -1,0 +1,26 @@
+### Update post's title
+
+PUT http://localhost:3000/posts/6737231dc4d25584d014a6a8
+content-type: application/json
+
+{
+    "title": "The beginning of a new era"
+}
+
+### Update post's constet
+
+PUT http://localhost:3000/posts/6737231dc4d25584d014a6a8
+content-type: application/json
+
+{
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Post id does not exist
+
+PUT http://localhost:3000/posts/6737231dc4d25584d014a6a7
+content-type: application/json
+
+{
+    "content": "Welcome back to me weekly podcast"
+}

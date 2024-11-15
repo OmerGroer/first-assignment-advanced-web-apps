@@ -15,9 +15,25 @@ const createPost = async (req, res) => {
   res.send("create a post");
 };
 
-const updatePost = (req, res) => {
-  console.log("delete a post");
-  res.send("delete a post");
+const updatePost = async (req, res) => {
+  const postId = req.params.id;
+  const postBody = req.body;
+
+  try {
+    const filter = { _id: postId };
+
+    const post = await PostModel.findOneAndUpdate(filter, postBody, {
+      new: true
+    })
+
+    if (post) {
+      res.status(201).send(post);
+    } else {
+      res.status(404).send("Post not found");
+    }
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
 };
 
 module.exports = {
