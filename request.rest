@@ -1,0 +1,10 @@
+###
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
