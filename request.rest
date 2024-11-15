@@ -1,4 +1,4 @@
-###
+### Add new post
 
 POST http://localhost:3000/posts
 content-type: application/json
@@ -9,7 +9,7 @@ content-type: application/json
     "content": "Welcome back to me weekly podcast"
 }
 
-###
+### Title is required and is not sent to add new post
 
 POST http://localhost:3000/posts
 content-type: application/json
@@ -19,7 +19,7 @@ content-type: application/json
     "content": "Welcome back to me weekly podcast"
 }
 
-###
+### Sender is required and is not sent to add new post
 
 POST http://localhost:3000/posts
 content-type: application/json
@@ -29,7 +29,7 @@ content-type: application/json
     "content": "Welcome back to me weekly podcast"
 }
 
-###
+### Title is required and sent as an empty string to add new post
 
 POST http://localhost:3000/posts
 content-type: application/json
@@ -40,7 +40,7 @@ content-type: application/json
     "content": "Welcome back to me weekly podcast"
 }
 
-###
+### Sender is required and sent as an empty string to add new post
 
 POST http://localhost:3000/posts
 content-type: application/json
