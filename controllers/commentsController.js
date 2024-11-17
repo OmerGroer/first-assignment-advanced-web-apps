@@ -10,6 +10,32 @@ const createComment = async (req, res) => {
     }
 };
 
+const updateComment = async (req, res) => {
+    const commentId = req.params.id;
+    const commentBody = req.body;
+
+    try {
+        const filter = { _id: commentId };
+
+        const comment = await commentModel.findOneAndUpdate(
+            filter,
+            commentBody,
+            {
+                new: true,
+            }
+        );
+
+        if (comment) {
+            res.status(201).send(comment);
+        } else {
+            res.status(404).send('Comment not found');
+        }
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+};
+
 module.exports = {
     createComment,
+    updateComment,
 };
