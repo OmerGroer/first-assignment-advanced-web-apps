@@ -29,3 +29,7 @@ GET http://localhost:3000/comments
 ### Get all comments by sender
 
 GET http://localhost:3000/comments?sender=Gal
+
+### Get comment by id
+
+GET http://localhost:3000/comments/673a548204c798c140489068
