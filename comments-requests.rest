@@ -18,3 +18,7 @@ content-type: application/json
     "content": "I don't like this podcast I lied"
 }
 
+### Update comment
+
+DELETE http://localhost:3000/comments/673a4612420424305e942dd5
+content-type: application/json
