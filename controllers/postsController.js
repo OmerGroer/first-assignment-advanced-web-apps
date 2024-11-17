@@ -11,8 +11,15 @@ const getPostById = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-  console.log("create a post");
-  res.send("create a post");
+  const postBody = req.body;
+
+  try {
+    const post = await PostModel.create(postBody);
+
+    res.status(201).send(post);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
 };
 
 const updatePost = (req, res) => {
