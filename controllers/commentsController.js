@@ -35,7 +35,26 @@ const updateComment = async (req, res) => {
     }
 };
 
+const deleteComment = async (req, res) => {
+    const commentId = req.params.id;
+
+    try {
+        const filter = { _id: commentId };
+
+        const comment = await commentModel.deleteOne(filter);
+
+        if (comment) {
+            res.status(200).send(comment);
+        } else {
+            res.status(404).send('Comment not found');
+        }
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+};
+
 module.exports = {
     createComment,
     updateComment,
+    deleteComment,
 };
