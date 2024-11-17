@@ -24,3 +24,72 @@ content-type: application/json
 {
     "content": "Welcome back to me weekly podcast"
 }
+### Get Post by id
+
+GET http://localhost:3000/posts/6737231dc4d25584d014a6a8
+
+### Post id does not exist
+
+GET http://localhost:3000/posts/6737231dc4d25584d014a6a7
+
+### Add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Title is required and is not sent to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Sender is required and is not sent to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Title is required and sent as an empty string to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "", 
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Sender is required and sent as an empty string to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "sender": "", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+
+### Get all posts
+
+GET http://localhost:3000/posts
+
+### Get posts by sender
+
+GET http://localhost:3000/posts?sender=Omer
