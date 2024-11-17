@@ -1,0 +1,20 @@
+### Add new comment
+
+POST http://localhost:3000/comments
+content-type: application/json
+
+{
+    "post": "673a45e6420424305e942dd3", 
+    "sender": "Gal", 
+    "content": "I like this podcast!"
+}
+
+### Update comment
+
+PUT http://localhost:3000/comments/673a4612420424305e942dd5
+content-type: application/json
+
+{
+    "content": "I don't like this podcast I lied"
+}
+
