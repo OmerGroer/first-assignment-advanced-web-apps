@@ -1,0 +1,10 @@
+### Add new post
+
+POST http://localhost:3000/comments
+content-type: application/json
+
+{
+    "post": "<_id>", 
+    "sender": "Gal", 
+    "content": "I like this podcast!"
+}
