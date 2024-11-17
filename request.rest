@@ -58,3 +58,12 @@ content-type: application/json
     "sender": "", 
     "content": "Welcome back to me weekly podcast"
 }
+
+
+### Get all posts
+
+GET http://localhost:3000/posts
+
+### Get posts by sender
+
+GET http://localhost:3000/posts?sender=Omer
