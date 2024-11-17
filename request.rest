@@ -54,3 +54,7 @@ content-type: application/json
 ### Get all posts
 
 GET http://localhost:3000/posts
+
+### Get posts by sender
+
+GET http://localhost:3000/posts?sender=Omer
