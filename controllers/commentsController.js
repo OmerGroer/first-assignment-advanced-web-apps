@@ -53,8 +53,23 @@ const deleteComment = async (req, res) => {
     }
 };
 
+const getAllComments = async (req, res) => {
+    const sender = req.query.sender;
+
+    try {
+        const filter = {};
+        if (sender) filter.sender = sender;
+
+        const comments = await commentModel.find(filter);
+        res.send(comments);
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+};
+
 module.exports = {
     createComment,
     updateComment,
     deleteComment,
+    getAllComments
 };

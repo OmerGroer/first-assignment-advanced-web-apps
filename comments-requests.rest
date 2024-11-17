@@ -22,3 +22,10 @@ content-type: application/json
 
 DELETE http://localhost:3000/comments/673a4612420424305e942dd5
 content-type: application/json
+
+### Get all comments
+GET http://localhost:3000/comments
+
+### Get all comments by sender
+
+GET http://localhost:3000/comments?sender=Gal
