@@ -55,10 +55,12 @@ const deleteComment = async (req, res) => {
 
 const getAllComments = async (req, res) => {
     const sender = req.query.sender;
+    const post = req.query.post;
 
     try {
         const filter = {};
         if (sender) filter.sender = sender;
+        if (post) filter.post = post;
 
         const comments = await commentModel.find(filter);
         res.send(comments);

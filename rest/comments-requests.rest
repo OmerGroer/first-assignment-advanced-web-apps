@@ -18,7 +18,7 @@ content-type: application/json
     "content": "I don't like this podcast I lied"
 }
 
-### Update comment
+### Delete comment
 
 DELETE http://localhost:3000/comments/673a4612420424305e942dd5
 content-type: application/json
@@ -33,3 +33,6 @@ GET http://localhost:3000/comments?sender=Gal
 ### Get comment by id
 
 GET http://localhost:3000/comments/673a548204c798c140489068
+
+### Get comments by post
+GET http://localhost:3000/comments?post=673a45e6420424305e942dd3
