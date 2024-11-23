@@ -43,12 +43,15 @@ const createPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   const postId = req.params.id;
-  const postBody = req.body;
+  const {title, content, ...ignore} = req.body;
 
   try {
     const filter = { _id: postId };
 
-    const post = await PostModel.findOneAndUpdate(filter, postBody, {
+    const post = await PostModel.findOneAndUpdate(filter, {
+      title,
+      content
+    }, {
       new: true
     })
 
