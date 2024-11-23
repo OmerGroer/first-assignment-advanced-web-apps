@@ -1,7 +1,13 @@
 const commentModel = require('../models/commentsModel');
+const PostModel = require('../models/postsModel');
 
 const createComment = async (req, res) => {
     try {
+        const post = await PostModel.findById(req.body.postId);
+        if (!post) {
+            return res.status(400).send('Post not found');
+        }
+
         const comment = await commentModel.create(req.body);
 
         return res.status(201).send(comment);
