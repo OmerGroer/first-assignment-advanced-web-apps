@@ -18,14 +18,14 @@ const createComment = async (req, res) => {
 
 const updateComment = async (req, res) => {
     const commentId = req.params.id;
-    const commentBody = req.body;
+    const commentContent = req.body.content;
 
     try {
         const filter = { _id: commentId };
 
         const comment = await commentModel.findOneAndUpdate(
             filter,
-            commentBody,
+            {content: commentContent},
             {
                 new: true,
             }
@@ -61,12 +61,12 @@ const deleteComment = async (req, res) => {
 
 const getAllComments = async (req, res) => {
     const sender = req.query.sender;
-    const post = req.query.post;
+    const postId = req.query.postId;
 
     try {
         const filter = {};
         if (sender) filter.sender = sender;
-        if (post) filter.post = post;
+        if (postId) filter.postId = postId;
 
         const comments = await commentModel.find(filter);
         res.send(comments);

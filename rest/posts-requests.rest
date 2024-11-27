@@ -16,7 +16,7 @@ content-type: application/json
     "content": "Welcome back to me weekly podcast"
 }
 
-### Post id does not exist
+### Update Post id does not exist
 
 PUT http://localhost:3000/posts/6737231dc4d25584d014a6a7
 content-type: application/json
@@ -28,7 +28,7 @@ content-type: application/json
 
 GET http://localhost:3000/posts/6737231dc4d25584d014a6a8
 
-### Post id does not exist
+### Get Post id does not exist
 
 GET http://localhost:3000/posts/6737231dc4d25584d014a6a7
 
