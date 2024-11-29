@@ -47,10 +47,10 @@ const deleteComment = async (req, res) => {
     try {
         const filter = { _id: commentId };
 
-        const comment = await commentModel.deleteOne(filter);
+        const result = await commentModel.deleteOne(filter);
 
-        if (comment) {
-            res.status(200).send(comment);
+        if (result.deletedCount === 1) {
+            res.status(200).send("Comment was deleted");
         } else {
             res.status(404).send('Comment not found');
         }
