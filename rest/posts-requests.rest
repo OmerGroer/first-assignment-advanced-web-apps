@@ -7,7 +7,7 @@ content-type: application/json
     "title": "The beginning of a new era"
 }
 
-### Update post's constet
+### Update post's content
 
 PUT http://localhost:3000/posts/6737231dc4d25584d014a6a8
 content-type: application/json

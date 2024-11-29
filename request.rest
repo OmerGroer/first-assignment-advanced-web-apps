@@ -1,0 +1,182 @@
+### Add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Title is required and is not sent to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Sender is required and is not sent to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Title is required and sent as an empty string to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "", 
+    "sender": "Omer", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Sender is required and sent as an empty string to add new post
+
+POST http://localhost:3000/posts
+content-type: application/json
+
+{
+    "title": "The beginning of a new era", 
+    "sender": "", 
+    "content": "Welcome back to me weekly podcast"
+}
+
+
+### Update post's title
+
+PUT http://localhost:3000/posts/6737231dc4d25584d014a6a8
+content-type: application/json
+
+{
+    "title": "The end of am old era!!!!"
+}
+
+### Update post's content
+
+PUT http://localhost:3000/posts/6737231dc4d25584d014a6a8
+content-type: application/json
+
+{
+    "content": "Welcome back today!"
+}
+
+### Update Post id does not exist
+
+PUT http://localhost:3000/posts/6737231dc4d25584d014a6a7
+content-type: application/json
+
+{
+    "content": "Welcome back to me weekly podcast"
+}
+
+### Get Post by id
+
+GET http://localhost:3000/posts/6737231dc4d25584d014a6a8
+
+### Get Post id does not exist
+
+GET http://localhost:3000/posts/6737231dc4d25584d014a6a7
+
+### Get all posts
+
+GET http://localhost:3000/posts
+
+### Get posts by sender
+
+GET http://localhost:3000/posts?sender=Omer
+
+
+### Add new comment
+
+POST http://localhost:3000/comments
+content-type: application/json
+
+{
+    "postId": "6737231dc4d25584d014a6a8", 
+    "sender": "Gal", 
+    "content": "I like this podcast!"
+}
+
+### Add new comment to post that does not exist
+
+POST http://localhost:3000/comments
+content-type: application/json
+
+{
+    "postId": "6737231dc4d255846014a6a8", 
+    "sender": "Gal", 
+    "content": "I like this podcast!"
+}
+
+### Add new comment without post id
+
+POST http://localhost:3000/comments
+content-type: application/json
+
+{
+    "sender": "Gal", 
+    "content": "I like this podcast!"
+}
+
+### Add new comment without sender
+
+POST http://localhost:3000/comments
+content-type: application/json
+
+{
+    "postId": "6737231dc4d25584d014a6a8", 
+    "content": "I like this podcast!"
+}
+
+### Update comment
+
+PUT http://localhost:3000/comments/6749b60982d1709bd31cc05c
+content-type: application/json
+
+{
+    "content": "I don't like this podcast I lied"
+}
+
+### Update comment id does not exist
+
+PUT http://localhost:3000/comments/6741970408f74007206ba406
+content-type: application/json
+
+{
+    "content": "I don't like this podcast I lied"
+}
+
+### Get all comments
+GET http://localhost:3000/comments
+
+### Get all comments by sender
+
+GET http://localhost:3000/comments?sender=Gal
+
+### Get comment by id
+
+GET http://localhost:3000/comments/6749b60982d1709bd31cc05c
+
+### Get comments by post
+GET http://localhost:3000/comments?postId=6737231dc4d25584d014a6a8
+
+
+### Delete comment
+
+DELETE http://localhost:3000/comments/6749b60982d1709bd31cc05c
+content-type: application/json
+
+### Delete comment id does not exist
+
+DELETE http://localhost:3000/comments/6741970408f74007206ba406
+content-type: application/json
