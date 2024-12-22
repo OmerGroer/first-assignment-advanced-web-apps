@@ -12,12 +12,18 @@ beforeAll(async () => {
   app = await initApp();
   await commentsModel.deleteMany();
   await postModel.deleteMany();
-  const response = await request(app).post("/posts").send({
+  const userResponse = await request(app).post("/users").send({
+    username: "Gal",
+    email: "Gal@gmail.com",
+    password: "secret",
+  });
+  comment.sender = userResponse.body._id;
+  const postResponse = await request(app).post("/posts").send({
     title: "Test Post",
     content: "Test Content",
-    sender: "Testsender",
+    sender: userResponse.body._id,
   });
-  comment.postId = response.body._id;
+  comment.postId = postResponse.body._id;
 });
 
 afterAll((done) => {
@@ -29,7 +35,7 @@ afterAll((done) => {
 let commentId = "";
 const comment = {
   content: "This is a comment",
-  sender: "Gal",
+  sender: "",
   postId: "",
 };
 
@@ -53,7 +59,9 @@ describe("Comments Tests", () => {
     const { postId, ...rest } = comment;
     const response = await request(app).post("/comments").send(rest);
     expect(response.statusCode).toBe(400);
-    expect(response.text).toBe("Post not found");
+    expect(response.body.message).toBe(
+      "Comments validation failed: postId: Path `postId` is required."
+    );
   });
 
   test("Test Create Comment without sender", async () => {
@@ -75,26 +83,34 @@ describe("Comments Tests", () => {
   });
 
   test("Test Create Comment with post id of empty string", async () => {
-      const response = await request(app).post("/comments").send({...comment, postId: ""});
-      expect(response.statusCode).toBe(400);
-      expect(response.text).toBe("Post not found");
-    });
-  
-    test("Test Create Comment with sender of empty string", async () => {
-      const response = await request(app).post("/comments").send({...comment, sender: ""});
-      expect(response.statusCode).toBe(400);
-      expect(response.body.message).toBe(
-        "Comments validation failed: sender: Path `sender` is required."
-      );
-    });
-  
-    test("Test Create Comment with content of empty string", async () => {
-      const response = await request(app).post("/comments").send({...comment, content: ""});
-      expect(response.statusCode).toBe(400);
-      expect(response.body.message).toBe(
-        "Comments validation failed: content: Path `content` is required."
-      );
-    });
+    const response = await request(app)
+      .post("/comments")
+      .send({ ...comment, postId: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Comments validation failed: postId: Path `postId` is required."
+    );
+  });
+
+  test("Test Create Comment with sender of empty string", async () => {
+    const response = await request(app)
+      .post("/comments")
+      .send({ ...comment, sender: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Comments validation failed: sender: Path `sender` is required."
+    );
+  });
+
+  test("Test Create Comment with content of empty string", async () => {
+    const response = await request(app)
+      .post("/comments")
+      .send({ ...comment, content: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Comments validation failed: content: Path `content` is required."
+    );
+  });
 
   test("Comments test get all", async () => {
     const response = await request(app).get("/comments");
@@ -162,6 +178,13 @@ describe("Comments Tests", () => {
     });
     expect(response.statusCode).toBe(404);
     expect(response.text).toBe("not found");
+  });
+
+  test("Test Create Comment with sender that does not exist", async () => {
+    await request(app).delete(`/users/${comment.sender}`);
+    const response = await request(app).post("/comments").send(comment);
+    expect(response.statusCode).toBe(400);
+    expect(response.text).toBe("Sender not found");
   });
 
   test("Test Create Comment to post that does not exist", async () => {
