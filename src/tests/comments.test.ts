@@ -74,6 +74,28 @@ describe("Comments Tests", () => {
     );
   });
 
+  test("Test Create Comment with post id of empty string", async () => {
+      const response = await request(app).post("/comments").send({...comment, postId: ""});
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe("Post not found");
+    });
+  
+    test("Test Create Comment with sender of empty string", async () => {
+      const response = await request(app).post("/comments").send({...comment, sender: ""});
+      expect(response.statusCode).toBe(400);
+      expect(response.body.message).toBe(
+        "Comments validation failed: sender: Path `sender` is required."
+      );
+    });
+  
+    test("Test Create Comment with content of empty string", async () => {
+      const response = await request(app).post("/comments").send({...comment, content: ""});
+      expect(response.statusCode).toBe(400);
+      expect(response.body.message).toBe(
+        "Comments validation failed: content: Path `content` is required."
+      );
+    });
+
   test("Comments test get all", async () => {
     const response = await request(app).get("/comments");
     expect(response.statusCode).toBe(200);
