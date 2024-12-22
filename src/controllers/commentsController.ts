@@ -10,9 +10,9 @@ class CommentsController extends BaseController<IComments> {
 
   async create(req: Request, res: Response) {
     try {
-      const post = await postModel.findById(req.body.postId);
-      if (!post) {
+      if (!req.body.postId || !(await postModel.findById(req.body.postId))) {
         res.status(400).send("Post not found");
+        return;
       }
 
       await super.create(req, res);
