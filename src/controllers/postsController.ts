@@ -1,5 +1,4 @@
 import postModel, { IPost } from "../models/postsModel";
-import userModel from "../models/usersModel";
 import BaseController from "./baseController";
 import { Request, Response } from "express";
 
@@ -10,12 +9,7 @@ class PostsController extends BaseController<IPost> {
 
     async create(req: Request, res: Response) {
       try { 
-        if (req.body.sender) {
-          const user = await userModel.findById(req.body.sender);
-          if (!user) {
-            throw new Error("Sender not found")
-          }
-        }
+        req.body.sender = res.locals.userId;
   
         await super.create(req, res);
       } catch (error) {
