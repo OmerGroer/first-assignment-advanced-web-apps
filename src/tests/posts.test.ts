@@ -22,7 +22,7 @@ beforeAll(async () => {
   await supertest(app).post("/auth/register").send(testUser);
   const res = await supertest(app).post("/auth/login").send(testUser);
   senderId = res.body._id;
-  const token = res.body.token;
+  const token = res.body.accessToken;
   expect(token).toBeDefined();
 
   request = supertest.agent(app).set({ authorization: `JWT ${token}` });
