@@ -47,6 +47,22 @@ describe("Auth Tests", () => {
     user._id = response.body._id;
   });
 
+  test("Test Create User with duplicate email", async () => {
+    const response = await request
+      .post("/auth/register")
+      .send({ ...user, username: "1" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe("Duplicate Key");
+  });
+
+  test("Test Create User with duplicate username", async () => {
+    const response = await request
+      .post("/auth/register")
+      .send({ ...user, email: "1" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe("Duplicate Key");
+  });
+
   test("Test Create user without username", async () => {
     const { username, ...rest } = user;
     const response = await request.post("/auth/register").send(rest);

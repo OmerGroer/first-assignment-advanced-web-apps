@@ -116,9 +116,38 @@ describe("Users Tests", () => {
     expect(validPassword).toBe(true);
   });
 
+  test("Test Update User with duplicate email", async () => {
+    await supertest(app).post("/auth/register").send({
+      username: "Omer",
+      email: "Omer@gmail.com",
+      password: "secret",
+    });
+
+    const response = await request.put(`/users/${userId}`).send({
+      email: "Omer@gmail.com",
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe("Duplicate Key");
+  });
+
+  test("Test Create User with duplicate username", async () => {
+    const response = await request.put(`/users/${userId}`).send({
+      username: "Omer",
+    });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe("Duplicate Key");
+  });
+
   test("Test Delete User", async () => {
     const response = await request.delete(`/users/${userId}`);
     expect(response.statusCode).toBe(200);
+    expect(response.body.username).toBe(user.username);
+    expect(response.body.email).toBe(user.email);
+    const validPassword = await bcrypt.compare(
+      user.password,
+      response.body.password
+    );
+    expect(validPassword).toBe(true);
   });
 
   test("Test get user by id that doesn't exist", async () => {
