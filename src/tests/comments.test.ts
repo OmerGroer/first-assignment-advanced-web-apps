@@ -146,8 +146,9 @@ describe("Comments Tests", () => {
     const response = await request.put(`/comments/${commentId}`).send({
       content: "The beginning of a new era",
     });
+    comment.content = "The beginning of a new era"
     expect(response.statusCode).toBe(201);
-    expect(response.body.content).toBe("The beginning of a new era");
+    expect(response.body.content).toBe(comment.content);
     expect(response.body.postId).toBe(comment.postId);
     expect(response.body.sender).toBe(senderId);
   });
@@ -155,6 +156,9 @@ describe("Comments Tests", () => {
   test("Test Delete Comment", async () => {
     const response = await request.delete(`/comments/${commentId}`);
     expect(response.statusCode).toBe(200);
+    expect(response.body.content).toBe(comment.content);
+    expect(response.body.postId).toBe(comment.postId);
+    expect(response.body.sender).toBe(senderId);
   });
 
   test("Test get comment by id that doesn't exist", async () => {

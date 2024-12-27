@@ -76,6 +76,25 @@ describe("Posts Tests", () => {
     );
   });
 
+  test("Test Create Post without content", async () => {
+    const { content, ...rest } = post;
+    const response = await request.post("/posts").send(rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: content: Path `content` is required."
+    );
+  });
+
+  test("Test Create Post with content of empty string", async () => {
+    const response = await request
+      .post("/posts")
+      .send({ ...post, content: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: content: Path `content` is required."
+    );
+  });
+
   test("Test get post by sender", async () => {
     const response = await request.get(`/posts?sender=${senderId}`);
     expect(response.statusCode).toBe(200);
@@ -141,6 +160,9 @@ describe("Posts Tests", () => {
   test("Test Delete Post", async () => {
     const response = await request.delete(`/posts/${postId}`);
     expect(response.statusCode).toBe(200);
+    expect(response.body.title).toBe(post.title);
+    expect(response.body.content).toBe(post.content);
+    expect(response.body.sender).toBe(senderId);
   });
 
   test("Test get post by id that doesn't exist", async () => {
