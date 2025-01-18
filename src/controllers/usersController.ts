@@ -152,7 +152,7 @@ class UsersController extends BaseController<IUser> {
   }
 
   getUpdateFields() {
-    return ["username", "email", "password"];
+    return ["username", "email", "password", "avatarUrl"];
   }
 
   addUserRestirction(req: Request, res: Response): { [key: string]: any; } {

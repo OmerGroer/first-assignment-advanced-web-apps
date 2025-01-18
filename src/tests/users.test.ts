@@ -29,48 +29,40 @@ afterAll((done) => {
 });
 
 let userId = "";
-const user = {
+const user: IUser = {
   username: "Gal",
   email: "Gal@gmail.com",
   password: "secret",
+  avatarUrl: "/public/avatar.png"
 };
+
+const assertUser = (actualUser: IUser, expectedUser: IUser = user) => {
+  expect(actualUser.username).toBe(expectedUser.username);
+  expect(actualUser.email).toBe(expectedUser.email);
+  expect(actualUser.avatarUrl).toBe(expectedUser.avatarUrl);
+  const validPassword = bcrypt.compareSync(expectedUser.password, actualUser.password);
+  expect(validPassword).toBe(true);
+}
+
 describe("Users Tests", () => {
   test("Test get user by username", async () => {
     const response = await request.get(`/users?username=${user.username}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
-    expect(response.body[0].username).toBe(user.username);
-    expect(response.body[0].email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body[0].password
-    );
-    expect(validPassword).toBe(true);
+    assertUser(response.body[0]);
   });
 
   test("Test get user by email", async () => {
     const response = await request.get(`/users?email=${user.email}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
-    expect(response.body[0].username).toBe(user.username);
-    expect(response.body[0].email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body[0].password
-    );
-    expect(validPassword).toBe(true);
+    assertUser(response.body[0]);
   });
 
   test("Test get user by id", async () => {
     const response = await request.get(`/users/${userId}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.username).toBe(user.username);
-    expect(response.body.email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body.password
-    );
-    expect(validPassword).toBe(true);
+    assertUser(response.body);
   });
 
   test("Test Update User's Username", async () => {
@@ -79,13 +71,7 @@ describe("Users Tests", () => {
     });
     user.username = "GalNaor";
     expect(response.statusCode).toBe(201);
-    expect(response.body.username).toBe(user.username);
-    expect(response.body.email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body.password
-    );
-    expect(validPassword).toBe(true);
+    assertUser(response.body);
   });
 
   test("Test Update User's Email", async () => {
@@ -94,13 +80,25 @@ describe("Users Tests", () => {
     });
     user.email = "GalNaor@gmail.com";
     expect(response.statusCode).toBe(201);
-    expect(response.body.username).toBe(user.username);
-    expect(response.body.email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body.password
-    );
-    expect(validPassword).toBe(true);
+    assertUser(response.body);
+  });
+
+  test("Test Update User's Avatar", async () => {
+    const response = await request.put(`/users/${userId}`).send({
+      avatarUrl: "/public/avatar2.png",
+    });
+    user.avatarUrl = "/public/avatar2.png";
+    expect(response.statusCode).toBe(201);
+    assertUser(response.body);
+  });
+
+  test("Test Update User's Password", async () => {
+    const response = await request.put(`/users/${userId}`).send({
+      password: "secret2",
+    });
+    user.password = "secret2";
+    expect(response.statusCode).toBe(201);
+    assertUser(response.body);
   });
 
   test("Test Update User's Password", async () => {
@@ -122,13 +120,7 @@ describe("Users Tests", () => {
     const response = await request.get(`/users`);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
-    expect(response.body[0].username).toBe(user.username);
-    expect(response.body[0].email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body[0].password
-    );
-    expect(validPassword).toBe(true);
+    assertUser(response.body[0]);
   });
 
   test("Test Update User with duplicate email", async () => {
@@ -136,6 +128,7 @@ describe("Users Tests", () => {
       username: "Omer",
       email: "Omer@gmail.com",
       password: "secret",
+      avatarUrl: "/public/avatar.png"
     });
 
     const response = await request.put(`/users/${userId}`).send({
@@ -158,6 +151,7 @@ describe("Users Tests", () => {
       username: "Meow",
       email: "meow@gmail.com",
       password: "secret",
+      avatarUrl: "/public/avatar.png"
     };
     const userReposnse = await supertest(app).post("/auth/register").send(testUser);
     const userId = userReposnse.body._id;
@@ -176,13 +170,7 @@ describe("Users Tests", () => {
   test("Test Delete User", async () => {
     const response = await request.delete(`/users/${userId}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.username).toBe(user.username);
-    expect(response.body.email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body.password
-    );
-    expect(validPassword).toBe(true);
+    assertUser(response.body);
   });
 
   test("Test Delete user with not existing id", async () => {

@@ -23,6 +23,7 @@ router.use(authMiddleware);
  *         - restaurantName
  *         - restaurnatAddress
  *         - rating
+ *         - imageUrl
  *         - _id
  *         - sender
  *       properties:
@@ -50,6 +51,9 @@ router.use(authMiddleware);
  *         sender:
  *           type: string
  *           description: The sender id of the post
+ *         imageUrl:
+ *           type: string
+ *           description: The url of the image of the post
  *       example:
  *         _id: 245234t234234r234r23f4
  *         content: This is the content of my first post.
@@ -58,6 +62,7 @@ router.use(authMiddleware);
  *         restaurnatCategory: Fast Food
  *         restaurnatAddress: 1234 Main St, City, State, 12345
  *         rating: 5
+ *         imageUrl: /public/324t23t4t23t4t23t4t.png
  *         sender: 324vt23r4tr234t245tbv45by
  */
 /**
@@ -163,6 +168,9 @@ router.get("/:id", postsController.getById);
  *               rating:
  *                 type: number
  *                 description: The rating of the restaurant
+ *               imageUrl:
+ *                 type: string
+ *                 description: The url of the image of the post
  *             example:
  *               content: This is the content of my first post.
  *               restaurantId: 324vt23r4tr234t245tbv45by
@@ -170,12 +178,14 @@ router.get("/:id", postsController.getById);
  *               restaurnatCategory: Fast Food
  *               restaurnatAddress: 1234 Main St, City, State, 12345
  *               rating: 5
+ *               imageUrl: /public/324t23t4t23t4t23t4t.png
  *             required:
  *               - content
  *               - restaurantId
  *               - restaurantName
  *               - restaurnatAddress
  *               - rating
+ *               - imageUrl
  *     responses:
  *       201:
  *         description: The new post
@@ -220,9 +230,13 @@ router.post("/", postsController.create);
  *               rating:
  *                 type: number
  *                 description: The rating of the restaurant
+ *               imageUrl:
+ *                 type: string
+ *                 description: The url of the image of the post
  *             example:
  *               content: This is the content of my first post.
  *               rating: 5
+ *               imageUrl: /public/324t23t4t23t4t23t4t.png
  *     responses:
  *       201:
  *         description: The post after the update

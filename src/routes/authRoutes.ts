@@ -27,6 +27,7 @@ import usersController from "../controllers/usersController";
  *         - username
  *         - email
  *         - password
+ *         - avatarUrl
  *       properties:
  *         username:
  *           type: string
@@ -37,10 +38,14 @@ import usersController from "../controllers/usersController";
  *         password:
  *           type: string
  *           description: The password of the user
+ *         avatarUrl:
+ *           type: string
+ *           description: The url of the avatar of the user
  *       example:
  *         username: Omer
  *         email: Omer@gmail.com
  *         password: 324vt23r4tr234t245tbv45by
+ *         avatarUrl: /pulic/324t23t4t23t4t23t4t.png
  */
 /**
  * @swagger
@@ -59,6 +64,7 @@ import usersController from "../controllers/usersController";
  *               - username
  *               - email
  *               - password
+ *               - avatarUrl
  *     responses:
  *       200:
  *         description: The new user

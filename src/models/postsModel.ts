@@ -3,9 +3,10 @@ import mongoose from "mongoose";
 export interface IPost {
   content: string;
   sender: string;
+  imageUrl: string;
   restaurantId: string;
   restaurantName: string;
-  restaurnatCategory: string | null;
+  restaurnatCategory?: string;
   restaurnatAddress: string;
   rating: number;
 }
@@ -36,6 +37,10 @@ const postSchema = new mongoose.Schema<IPost>({
     required: false,
   },
   restaurnatAddress: {
+    type: String,
+    required: true,
+  },
+  imageUrl: {
     type: String,
     required: true,
   },
