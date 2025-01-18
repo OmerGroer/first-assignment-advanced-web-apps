@@ -12,6 +12,7 @@ import express, { Express } from "express";
 import postsRoute from "./routes/postRoutes";
 import commentsRoute from "./routes/commentRoutes";
 import userRoutes from "./routes/userRoutes";
+import restaurantRoutes from "./routes/restaurantRoutes";
 import authRoutes from "./routes/authRoutes";
 import fileRoute from "./routes/fileRoutes";
 import swaggerJsDoc from "swagger-jsdoc";
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 app.use("/posts", postsRoute);
 app.use("/comments", commentsRoute);
 app.use("/users", userRoutes);
+app.use("/restaurants", restaurantRoutes);
 app.use("/auth", authRoutes);
 app.use("/file", fileRoute);
 app.use("/public", express.static("public"));
