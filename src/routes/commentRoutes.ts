@@ -33,13 +33,16 @@ router.use(authMiddleware);
  *           type: string
  *           description: The id of the related post of the comment
  *         sender:
- *           type: string
+ *           $ref: '#/components/schemas/UserPost'
  *           description: The sender id of the comment
  *       example:
  *         _id: 245234t234234r234r23f4
  *         content: My First comment
  *         postId: 2f5ft23r4tr234t3698bv4vf5
- *         sender: 324vt23r4tr234t245tbv45by
+ *         sender:
+ *           _id: 245234t234234r234r23f4
+ *           username: Omer
+ *           avatarUrl: /pulic/324t23t4t23t4t23t4t.png
  */
 /**
  * @swagger
