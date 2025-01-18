@@ -1,21 +1,41 @@
 import mongoose from "mongoose";
 
 export interface IPost {
-  title: string;
   content: string;
   sender: string;
+  restaurantId: string;
+  restaurantName: string;
+  restaurnatCategory: string | null;
+  restaurnatAddress: string;
+  rating: number;
 }
 
 const postSchema = new mongoose.Schema<IPost>({
-  title: {
-    type: String,
-    required: true,
-  },
   content: {
     type: String,
     required: true,
   },
   sender: {
+    type: String,
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+  },
+  restaurantId: {
+    type: String,
+    required: true,
+  },
+  restaurantName: {
+    type: String,
+    required: true,
+  },
+  restaurnatCategory: {
+    type: String,
+    required: false,
+  },
+  restaurnatAddress: {
     type: String,
     required: true,
   },
