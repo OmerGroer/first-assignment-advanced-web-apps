@@ -1,15 +1,17 @@
 import express from "express";
 const router = express.Router();
-import usersController, { authMiddleware } from "../controllers/usersController";
+import usersController, {
+  authMiddleware,
+} from "../controllers/usersController";
 
 router.use(authMiddleware);
 
 /**
-* @swagger
-* tags:
-*   name: Users
-*   description: The Users API
-*/
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: The Users API
+ */
 /**
  * @swagger
  * components:
@@ -21,6 +23,7 @@ router.use(authMiddleware);
  *         - username
  *         - email
  *         - password
+ *         - avatarUrl
  *       properties:
  *         _id:
  *           type: string
@@ -34,10 +37,14 @@ router.use(authMiddleware);
  *         password:
  *           type: string
  *           description: The encrypted password of the user
+ *         avatarUrl:
+ *           type: string
+ *           description: The url of the avatar of the user
  *       example:
  *         _id: 245234t234234r234r23f4
  *         username: Omer
  *         email: Omer@gmail.com
+ *         avatarUrl: /pulic/324t23t4t23t4t23t4t.png
  *         password: 324vt23r4tr234t245tbv45by
  */
 /**
@@ -141,6 +148,9 @@ router.get("/:id", usersController.getById);
  *               password:
  *                 type: string
  *                 description: The password of the user
+ *               avatarUrl:
+ *                 type: string
+ *                 description: The url of the avatar of the user
  *     responses:
  *       201:
  *         description: The user after the update
