@@ -77,6 +77,12 @@ router.use(authMiddleware);
  *           type: string
  *         required: false
  *         description: The sender ID to filter by the posts
+ *       - in: query
+ *         name: restaurantId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The restaurant ID to filter by the posts
  *     responses:
  *       200:
  *         description: A list of posts
