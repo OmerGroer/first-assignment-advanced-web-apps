@@ -32,6 +32,10 @@ class CommentsController extends BaseController<IComments> {
   getUpdateFields() {
     return ["content"];
   }
+
+  addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
+    return { sender: res.locals.userId };
+  }
 }
 
 export default new CommentsController();

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Model, RootFilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, Model, RootFilterQuery, UpdateQuery } from "mongoose";
 
 class BaseController<T> {
   model: Model<T>;
@@ -64,8 +64,13 @@ class BaseController<T> {
   async delete(req: Request, res: Response) {
     const id = req.params.id;
     try {
-      const rs = await this.model.findByIdAndDelete(id);
-      res.status(200).send(rs);
+      const filter = { $and: [{_id: id}, this.addUserRestirction(req, res)] };
+      const item = await this.model.findOneAndDelete(filter as FilterQuery<T>);
+      if (item) {
+        res.status(200).send(item);
+      } else {
+        res.status(404).send("not found");
+      }
     } catch (error) {
       res.status(400).send(error);
     }
@@ -83,10 +88,10 @@ class BaseController<T> {
     }
 
     try {
-      const filter = { _id: id };
+      const filter = { $and: [{_id: id}, this.addUserRestirction(req, res)] };
 
       const item = await this.model.findOneAndUpdate(
-        filter,
+        filter as FilterQuery<T>,
         updateBody as UpdateQuery<T>,
         {
           new: true,
@@ -105,6 +110,10 @@ class BaseController<T> {
 
       res.status(400).send(error);
     }
+  }
+
+  addUserRestirction(req: Request, res: Response): { [key: string]: any } {
+    return {};
   }
 }
 

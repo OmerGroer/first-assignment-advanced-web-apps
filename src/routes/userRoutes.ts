@@ -117,7 +117,7 @@ router.get("/:id", usersController.getById);
 
 /**
  * @swagger
- * /users:
+ * /users/{id}:
  *   put:
  *     summary: Update a user
  *     description: Uppdate a user

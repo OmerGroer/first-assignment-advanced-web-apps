@@ -155,6 +155,10 @@ class UsersController extends BaseController<IUser> {
     return ["username", "email", "password", "avatarUrl"];
   }
 
+  addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
+    return { _id: res.locals.userId };
+  }
+
   async login(req: Request, res: Response) {
     try {
       const user = await userModel.findOne({

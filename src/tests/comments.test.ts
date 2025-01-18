@@ -122,9 +122,7 @@ describe("Comments Tests", () => {
   });
 
   test("Test get comment by sender", async () => {
-    const response = await request.get(
-      `/comments?sender=${senderId}`
-    );
+    const response = await request.get(`/comments?sender=${senderId}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
     assertComment(response.body[0]);
@@ -137,9 +135,7 @@ describe("Comments Tests", () => {
   });
 
   test("Test get comment by post id", async () => {
-    const response = await request.get(
-      `/comments?postId=${comment.postId}`
-    );
+    const response = await request.get(`/comments?postId=${comment.postId}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
     assertComment(response.body[0]);
@@ -149,7 +145,7 @@ describe("Comments Tests", () => {
     const response = await request.put(`/comments/${commentId}`).send({
       content: "The beginning of a new era",
     });
-    comment.content = "The beginning of a new era"
+    comment.content = "The beginning of a new era";
     expect(response.statusCode).toBe(201);
     assertComment(response.body);
   });
@@ -172,6 +168,41 @@ describe("Comments Tests", () => {
     });
     expect(response.statusCode).toBe(404);
     expect(response.text).toBe("not found");
+  });
+
+  test("Test Delete comment with not existing id", async () => {
+    const response = await request.delete(`/comments/${commentId}`);
+    expect(response.statusCode).toBe(404);
+    expect(response.text).toBe("not found");
+  });
+
+  test("Test Update/Delete comment that is not owned by the user", async () => {
+    const testUser: IUser = {
+      username: "Omer",
+      email: "Omer@gmail.com",
+      password: "secret",
+    };
+    await supertest(app).post("/auth/register").send(testUser);
+    const res = await supertest(app).post("/auth/login").send(testUser);
+    const token = res.body.accessToken;
+    expect(token).toBeDefined();
+    const localRequest = supertest
+      .agent(app)
+      .set({ authorization: `JWT ${token}` });
+
+    const commentReposne = await localRequest.post("/comments").send(comment);
+    expect(commentReposne.statusCode).toBe(201);
+    const commentId = commentReposne.body._id;
+
+    const response = await request.put(`/comments/${commentId}`).send({
+      content: "Test Post",
+    });
+    expect(response.statusCode).toBe(404);
+    expect(response.text).toBe("not found");
+
+    const response2 = await request.delete(`/comments/${commentId}`);
+    expect(response2.statusCode).toBe(404);
+    expect(response2.text).toBe("not found");
   });
 
   test("Test Create Comment to post that does not exist", async () => {

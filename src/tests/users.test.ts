@@ -101,6 +101,21 @@ describe("Users Tests", () => {
     assertUser(response.body);
   });
 
+  test("Test Update User's Password", async () => {
+    const response = await request.put(`/users/${userId}`).send({
+      password: "secret2",
+    });
+    user.password = "secret2";
+    expect(response.statusCode).toBe(201);
+    expect(response.body.username).toBe(user.username);
+    expect(response.body.email).toBe(user.email);
+    const validPassword = await bcrypt.compare(
+      user.password,
+      response.body.password
+    );
+    expect(validPassword).toBe(true);
+  });
+
   test("Test get all users", async () => {
     const response = await request.get(`/users`);
     expect(response.statusCode).toBe(200);
@@ -131,10 +146,36 @@ describe("Users Tests", () => {
     expect(response.body.message).toBe("Duplicate Key");
   });
 
+  test("Test Update/Delete user that is not the logged user", async () => {
+    const testUser: IUser = {
+      username: "Meow",
+      email: "meow@gmail.com",
+      password: "secret",
+    };
+    const userReposnse = await supertest(app).post("/auth/register").send(testUser);
+    const userId = userReposnse.body._id;
+
+    const response = await request.put(`/users/${userId}`).send({
+      username: "Gal",
+    });
+    expect(response.statusCode).toBe(404);
+    expect(response.text).toBe("not found");
+
+    const response2 = await request.delete(`/users/${userId}`);
+    expect(response2.statusCode).toBe(404);
+    expect(response2.text).toBe("not found");
+  });
+
   test("Test Delete User", async () => {
     const response = await request.delete(`/users/${userId}`);
     expect(response.statusCode).toBe(200);
     assertUser(response.body);
+  });
+
+  test("Test Delete user with not existing id", async () => {
+    const response = await request.delete(`/users/${userId}`);
+    expect(response.statusCode).toBe(404);
+    expect(response.text).toBe("not found");
   });
 
   test("Test get user by id that doesn't exist", async () => {
