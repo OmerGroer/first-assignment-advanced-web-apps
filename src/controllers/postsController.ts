@@ -1,6 +1,7 @@
 import postModel, { IPost } from "../models/postsModel";
 import BaseController from "./baseController";
 import { Request, Response } from "express";
+import restaurantModel from "../models/restaurantsModel";
 
 class PostsController extends BaseController<IPost> {
     constructor() {
@@ -9,6 +10,8 @@ class PostsController extends BaseController<IPost> {
 
     async create(req: Request, res: Response) {
       try { 
+        res.locals.restaurant = req.body.restaurant;
+        req.body = req.body.post;
         req.body.sender = res.locals.userId;
   
         await super.create(req, res);
@@ -18,7 +21,7 @@ class PostsController extends BaseController<IPost> {
     }
 
     getFilterFields() {
-      return ["sender", "restaurantId"];
+      return ["sender", "restaurant"];
     }
 
     getUpdateFields() {
@@ -32,7 +35,90 @@ class PostsController extends BaseController<IPost> {
     getPopulatedFields() {
       return new Map<string, string>([
         ["sender", "username avatarUrl"],
+        ["restaurant", "name"],
       ]);
+    }
+
+    async createHelper(req: Request, res: Response, item: IPost) {
+      const restaurant = res.locals.restaurant;
+      const resturantDb = await restaurantModel.findById(item.restaurant).lean().exec() || {
+        name: "",
+        address: "",
+        priceTypes: "",
+        category: null
+      };
+
+      if (restaurant) {
+        resturantDb.name = restaurant.name || resturantDb.name || null;
+        if (!resturantDb.name) throw new Error("Restaurant Name is required");
+        resturantDb.category = restaurant.category || resturantDb.category || null;
+        resturantDb.address = restaurant.address || resturantDb.address || null;
+        if (!resturantDb.address) throw new Error("Restaurant Address is required");
+        resturantDb.priceTypes = restaurant.priceTypes || resturantDb.priceTypes || null;
+        if (!resturantDb.priceTypes) throw new Error("Restaurant Price Types is required");
+      }
+
+      await restaurantModel.updateOne({_id: item.restaurant}, [
+        {
+          $set: {
+            name: resturantDb.name,
+            category: resturantDb.category,
+            address: resturantDb.address,
+            priceTypes: resturantDb.priceTypes,
+            ratingCount: { $add: [{ $ifNull: ["$ratingCount", 0] }, 1] },
+            rating: {
+              $divide: [
+                { $add: [{ $multiply: [{ $ifNull: ["$rating", 0] }, { $ifNull: ["$ratingCount", 0] }] }, item.rating] },
+                { $add: [{ $ifNull: ["$ratingCount", 0] }, 1] }
+              ]
+            }
+          }
+        }
+      ], { upsert: true });
+    }
+
+    async updateHelper(req: Request, res: Response, oldItem: IPost, item: IPost) {
+      await restaurantModel.updateOne({_id: item.restaurant}, [
+        {
+          $set: {
+            rating: {
+              $divide: [
+                { $subtract: [{ $add: [{ $multiply: ["$rating", "$ratingCount"] }, item.rating] }, oldItem.rating] },
+                "$ratingCount"
+              ]
+            }
+          }
+        }
+      ]);
+    }
+
+    async deleteHelper(req: Request, res: Response, item: IPost) {
+      await restaurantModel.updateOne({_id: item.restaurant}, [
+        {
+          $set: {
+            ratingCount: { $subtract: ["$ratingCount", 1] },
+            rating: {
+              $cond: {
+                if: { $ne: ["$ratingCount", 1] },
+                then: {
+                  $divide: [
+                    { $subtract: [{ $multiply: ["$rating", "$ratingCount"] }, item.rating] },
+                    {
+                      $cond: {
+                        if: { $ne: ["$ratingCount", 1] },
+                        then: { $subtract: ["$ratingCount", 1] },
+                        else: 1
+                      }
+                    }
+                  ]
+                },
+                else: 0
+              }
+            }
+          }
+        }
+      ]);
+      await restaurantModel.deleteOne({ _id: item.restaurant, ratingCount: 0 });
     }
   }
 

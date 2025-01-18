@@ -1,13 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface IPost {
   content: string;
-  sender: Schema.Types.ObjectId;
+  sender: Types.ObjectId;
   imageUrl: string;
-  restaurantId: string;
-  restaurantName: string;
-  restaurnatCategory?: string;
-  restaurnatAddress: string;
+  restaurant: string;
   rating: number;
 }
 
@@ -24,21 +21,14 @@ const postSchema = new mongoose.Schema<IPost>({
   rating: {
     type: Number,
     required: true,
+    validate: {
+      validator: (v: number) => v > 0 && v <= 5,
+      message: "Rating must be between 1 and 5",
+    },
   },
-  restaurantId: {
+  restaurant: {
     type: String,
-    required: true,
-  },
-  restaurantName: {
-    type: String,
-    required: true,
-  },
-  restaurnatCategory: {
-    type: String,
-    required: false,
-  },
-  restaurnatAddress: {
-    type: String,
+    ref: "Restaurants",
     required: true,
   },
   imageUrl: {

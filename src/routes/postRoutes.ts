@@ -20,8 +20,6 @@ router.use(authMiddleware);
  *       required:
  *         - content
  *         - restaurantId
- *         - restaurantName
- *         - restaurnatAddress
  *         - rating
  *         - imageUrl
  *         - _id
@@ -33,18 +31,9 @@ router.use(authMiddleware);
  *         content:
  *           type: string
  *           description: The content of the post
- *         restaurantId:
- *           type: string
+ *         restaurant:
+ *           $ref: '#/components/schemas/RestaurantPost'
  *           description: The restaurant id related to the post
- *         restaurantName:
- *           type: string
- *           description: The name of the restaurant
- *         restaurnatCategory:
- *           type: string
- *           description: The category of the restaurnat
- *         restaurnatAddress:
- *           type: string
- *           description: The address of the restaurant
  *         rating:
  *           type: number
  *           description: The rating of the restaurant
@@ -57,10 +46,9 @@ router.use(authMiddleware);
  *       example:
  *         _id: 245234t234234r234r23f4
  *         content: This is the content of my first post.
- *         restaurantId: 324vt23r4tr234t245tbv45by
- *         restaurantName: My Restaurant
- *         restaurnatCategory: Fast Food
- *         restaurnatAddress: 1234 Main St, City, State, 12345
+ *         restaurant: 
+ *           _id: 324vt23r4tr234t245tbv45by
+ *           name: My Restaurant
  *         rating: 5
  *         imageUrl: /public/324t23t4t23t4t23t4t.png
  *         sender:
@@ -87,6 +75,21 @@ router.use(authMiddleware);
  *         _id: 245234t234234r234r23f4
  *         username: Omer
  *         avatarUrl: /pulic/324t23t4t23t4t23t4t.png
+ *     RestaurantPost:
+ *       type: object
+ *       required:
+ *         - _id
+ *         - name
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The id of the restaurant
+ *         name:
+ *           type: string
+ *           description: The name of the restaurant
+ *       example:
+ *         _id: 234t234t234t234t234t234t
+ *         name: My Restaurant
  */
 /**
  * @swagger
@@ -106,7 +109,7 @@ router.use(authMiddleware);
  *         required: false
  *         description: The sender ID to filter by the posts
  *       - in: query
- *         name: restaurantId
+ *         name: restaurant
  *         schema:
  *           type: string
  *         required: false
