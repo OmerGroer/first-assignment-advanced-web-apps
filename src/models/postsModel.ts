@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IPost {
   content: string;
-  sender: string;
+  sender: Schema.Types.ObjectId;
   imageUrl: string;
   restaurantId: string;
   restaurantName: string;
@@ -17,7 +17,8 @@ const postSchema = new mongoose.Schema<IPost>({
     required: true,
   },
   sender: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Users",
     required: true,
   },
   rating: {

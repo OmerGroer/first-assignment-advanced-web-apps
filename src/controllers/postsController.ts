@@ -28,6 +28,12 @@ class PostsController extends BaseController<IPost> {
     addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
       return { sender: res.locals.userId };
     }
+    
+    getPopulatedFields() {
+      return new Map<string, string>([
+        ["sender", "username avatarUrl"],
+      ]);
+    }
   }
 
   export default new PostsController();

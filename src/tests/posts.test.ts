@@ -37,7 +37,7 @@ afterAll((done) => {
 
 let senderId = "";
 let postId = "";
-const post: IPost = {
+const post = {
   content: "Test Content",
   restaurantId: "123",
   restaurantName: "Test Restaurant",
@@ -45,7 +45,6 @@ const post: IPost = {
   restaurnatAddress: "Test restaurnatAddress",
   rating: 5,
   imageUrl: "/public/image.png",
-  sender: "",
 };
 
 const assertPost = (actualPost: IPost) => {
