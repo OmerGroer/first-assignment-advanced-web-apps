@@ -14,12 +14,6 @@ beforeAll(async () => {
   await postModel.deleteMany();
   await userModel.deleteMany();
 
-  const testUser: IUser = {
-    username: "Gal",
-    email: "Gal@gmail.com",
-    password: "secret",
-    avatarUrl: "/public/avatar.png",
-  };
   await supertest(app).post("/auth/register").send(testUser);
   const res = await supertest(app).post("/auth/login").send(testUser);
   senderId = res.body._id;
@@ -35,8 +29,22 @@ afterAll((done) => {
   done();
 });
 
+type Post = IPost & {
+  sender: { 
+    _id: string,
+    username: string,
+    avatarUrl: string,
+  };
+};
+
 let senderId = "";
 let postId = "";
+const testUser: IUser = {
+  username: "Gal",
+  email: "Gal@gmail.com",
+  password: "secret",
+  avatarUrl: "/public/avatar.png",
+};
 const post = {
   content: "Test Content",
   restaurantId: "123",
@@ -47,7 +55,7 @@ const post = {
   imageUrl: "/public/image.png",
 };
 
-const assertPost = (actualPost: IPost) => {
+const assertPost = (actualPost: Post) => {
   expect(actualPost.restaurantId).toBe(post.restaurantId);
   expect(actualPost.restaurantName).toBe(post.restaurantName);
   expect(actualPost.restaurnatCategory).toBe(post.restaurnatCategory);
@@ -55,7 +63,9 @@ const assertPost = (actualPost: IPost) => {
   expect(actualPost.rating).toBe(post.rating);
   expect(actualPost.content).toBe(post.content);
   expect(actualPost.imageUrl).toBe(post.imageUrl);
-  expect(actualPost.sender).toBe(senderId);
+  expect(actualPost.sender._id).toBe(senderId);
+  expect(actualPost.sender.username).toBe(testUser.username);
+  expect(actualPost.sender.avatarUrl).toBe(testUser.avatarUrl);
 };
 
 describe("Posts Tests", () => {
