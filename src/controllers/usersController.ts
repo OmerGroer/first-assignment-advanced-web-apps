@@ -132,12 +132,31 @@ class UsersController extends BaseController<IUser> {
     }
   }
 
+  async update(req: Request, res: Response) {
+    try {
+      const password = req.body.password;
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        req.body.password = hashedPassword;
+      }
+
+      await super.update(req, res);
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  }
+
   getFilterFields() {
     return ["username", "email"];
   }
 
   getUpdateFields() {
     return ["username", "email", "password"];
+  }
+
+  addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
+    return { _id: res.locals.userId };
   }
 
   async login(req: Request, res: Response) {

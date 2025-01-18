@@ -24,6 +24,10 @@ class PostsController extends BaseController<IPost> {
     getUpdateFields() {
       return ["rating", "content"];
     }
+
+    addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
+      return { sender: res.locals.userId };
+    }
   }
 
   export default new PostsController();

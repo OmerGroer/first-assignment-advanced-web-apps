@@ -161,8 +161,15 @@ router.get("/:id", postsController.getById);
  *                 type: string
  *                 description: The address of the restaurant
  *               rating:
- *                 type: string
+ *                 type: number
  *                 description: The rating of the restaurant
+ *             example:
+ *               content: This is the content of my first post.
+ *               restaurantId: 324vt23r4tr234t245tbv45by
+ *               restaurantName: My Restaurant
+ *               restaurnatCategory: Fast Food
+ *               restaurnatAddress: 1234 Main St, City, State, 12345
+ *               rating: 5
  *             required:
  *               - content
  *               - restaurantId
@@ -185,7 +192,7 @@ router.post("/", postsController.create);
 
 /**
  * @swagger
- * /posts:
+ * /posts/{id}:
  *   put:
  *     summary: Update a post
  *     description: Uppdate a post
@@ -211,8 +218,11 @@ router.post("/", postsController.create);
  *                 type: string
  *                 description: The content of the post
  *               rating:
- *                 type: string
+ *                 type: number
  *                 description: The rating of the restaurant
+ *             example:
+ *               content: This is the content of my first post.
+ *               rating: 5
  *     responses:
  *       201:
  *         description: The post after the update

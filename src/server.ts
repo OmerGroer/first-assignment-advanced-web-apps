@@ -1,4 +1,11 @@
 import dotenv from "dotenv";
+
+if (process.env.NODE_ENV == "test") {
+  dotenv.config({ path: ".env.test" });
+} else {
+  dotenv.config();
+}
+
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import express, { Express } from "express";
@@ -8,12 +15,6 @@ import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
-
-if (process.env.NODE_ENV == "test") {
-  dotenv.config({ path: ".env.test" });
-} else {
-  dotenv.config();
-}
 
 const app = express();
 app.use(bodyParser.json());
