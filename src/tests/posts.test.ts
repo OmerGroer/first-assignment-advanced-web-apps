@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import postModel, { IPost } from "../models/postsModel";
 import { Express } from "express";
 import userModel, { IUser } from "../models/usersModel";
+import restaurantModel from "../models/restaurantsModel";
 
 var app: Express;
 var request: Agent;
@@ -13,6 +14,7 @@ beforeAll(async () => {
   app = await initApp();
   await postModel.deleteMany();
   await userModel.deleteMany();
+  await restaurantModel.deleteMany();
 
   await supertest(app).post("/auth/register").send(testUser);
   const res = await supertest(app).post("/auth/login").send(testUser);
@@ -35,10 +37,15 @@ type Post = IPost & {
     username: string,
     avatarUrl: string,
   };
+  restaurant: {
+    _id: string,
+    name: string,
+  };
 };
 
 let senderId = "";
 let postId = "";
+let secondPostId = "";
 const testUser: IUser = {
   username: "Gal",
   email: "Gal@gmail.com",
@@ -47,19 +54,21 @@ const testUser: IUser = {
 };
 const post = {
   content: "Test Content",
-  restaurantId: "123",
-  restaurantName: "Test Restaurant",
-  restaurnatCategory: "Test restaurnatCategory",
-  restaurnatAddress: "Test restaurnatAddress",
+  restaurant: "123",
   rating: 5,
   imageUrl: "/public/image.png",
 };
+const testRestaurant = {
+  _id: "123",
+  name: "Test Restaurant",
+  category: "Test Category",
+  address: "Test Address",
+  priceTypes: "Test Price"
+};
 
 const assertPost = (actualPost: Post) => {
-  expect(actualPost.restaurantId).toBe(post.restaurantId);
-  expect(actualPost.restaurantName).toBe(post.restaurantName);
-  expect(actualPost.restaurnatCategory).toBe(post.restaurnatCategory);
-  expect(actualPost.restaurnatAddress).toBe(post.restaurnatAddress);
+  expect(actualPost.restaurant._id).toBe(post.restaurant);
+  expect(actualPost.restaurant.name).toBe(testRestaurant.name);
   expect(actualPost.rating).toBe(post.rating);
   expect(actualPost.content).toBe(post.content);
   expect(actualPost.imageUrl).toBe(post.imageUrl);
@@ -68,6 +77,21 @@ const assertPost = (actualPost: Post) => {
   expect(actualPost.sender.avatarUrl).toBe(testUser.avatarUrl);
 };
 
+const assertRestaurant = async (restaurantId: string, ratingCount: number, rating: number) => {
+  const response = await request.get(`/restaurants/${restaurantId}`);
+  expect(response.statusCode).toBe(200);
+  expect(response.body.name).toBe(testRestaurant.name);
+  expect(response.body.category).toBe(testRestaurant.category);
+  expect(response.body.address).toBe(testRestaurant.address);
+  expect(response.body.priceTypes).toBe(testRestaurant.priceTypes);
+  expect(response.body.ratingCount).toBe(ratingCount);
+  expect(response.body.rating).toBe(rating);
+}
+
+const createPost = async (post: any, restaurant: any = testRestaurant) => {
+  return await request.post("/posts").send({post, restaurant});
+}
+
 describe("Posts Tests", () => {
   test("Posts test get all", async () => {
     const response = await request.get("/posts");
@@ -75,90 +99,111 @@ describe("Posts Tests", () => {
     expect(response.body.length).toBe(0);
   });
 
+  test("Test Create Post without restaurant name of new restaurant", async () => {
+    const { name, ...rest } = testRestaurant;
+    const response = await createPost(post, rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Restaurant Name is required"
+    );
+  });
+
+  test("Test Create Post with restaurant name of empty string of new restaurant", async () => {
+    const response = await createPost(post, { ...testRestaurant, name: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Restaurant Name is required"
+    );
+  });
+
+  test("Test Create Post without restaurnat address of new restaurant", async () => {
+    const { address, ...rest } = testRestaurant;
+    const response = await createPost(post, rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Restaurant Address is required"
+    );
+  });
+
+  test("Test Create Post with restaurnat address of empty string of new restaurant", async () => {
+    const response = await createPost(post, { ...testRestaurant, address: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Restaurant Address is required"
+    );
+  });
+
+  test("Test Create Post without restaurnat priceTypes of new restaurant", async () => {
+    const { priceTypes, ...rest } = testRestaurant;
+    const response = await createPost(post, rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Restaurant Price Types is required"
+    );
+  });
+
+  test("Test Create Post with restaurnat priceTypes of empty string of new restaurant", async () => {
+    const response = await createPost(post, { ...testRestaurant, priceTypes: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Restaurant Price Types is required"
+    );
+  });
+
   test("Test Create Post", async () => {
-    const response = await request.post("/posts").send(post);
+    const response = await createPost(post);
     expect(response.statusCode).toBe(201);
     assertPost(response.body);
     postId = response.body._id;
+
+    assertRestaurant(post.restaurant, 1, 5);
   });
 
-  test("Test Create Post without restaurantId", async () => {
-    const { restaurantId, ...rest } = post;
-    const response = await request.post("/posts").send(rest);
+  test("Test Create Post without restaurant", async () => {
+    const { restaurant, ...rest } = post;
+    const response = await createPost(rest);
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
-      "Posts validation failed: restaurantId: Path `restaurantId` is required."
+      "Posts validation failed: restaurant: Path `restaurant` is required."
     );
   });
 
-  test("Test Create Post with restaurantId of empty string", async () => {
-    const response = await request
-      .post("/posts")
-      .send({ ...post, restaurantId: "" });
+  test("Test Create Post with restaurant of empty string", async () => {
+    const response = await createPost({ ...post, restaurant: "" });
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
-      "Posts validation failed: restaurantId: Path `restaurantId` is required."
-    );
-  });
-
-  test("Test Create Post without restaurantName", async () => {
-    const { restaurantName, ...rest } = post;
-    const response = await request.post("/posts").send(rest);
-    expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe(
-      "Posts validation failed: restaurantName: Path `restaurantName` is required."
-    );
-  });
-
-  test("Test Create Post with restaurantName of empty string", async () => {
-    const response = await request
-      .post("/posts")
-      .send({ ...post, restaurantName: "" });
-    expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe(
-      "Posts validation failed: restaurantName: Path `restaurantName` is required."
-    );
-  });
-
-  test("Test Create Post without restaurnatAddress", async () => {
-    const { restaurnatAddress, ...rest } = post;
-    const response = await request.post("/posts").send(rest);
-    expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe(
-      "Posts validation failed: restaurnatAddress: Path `restaurnatAddress` is required."
-    );
-  });
-
-  test("Test Create Post with restaurnatAddress of empty string", async () => {
-    const response = await request
-      .post("/posts")
-      .send({ ...post, restaurnatAddress: "" });
-    expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe(
-      "Posts validation failed: restaurnatAddress: Path `restaurnatAddress` is required."
+      "Posts validation failed: restaurant: Path `restaurant` is required."
     );
   });
 
   test("Test Create Post without rating", async () => {
     const { rating, ...rest } = post;
-    const response = await request.post("/posts").send(rest);
+    const response = await createPost(rest);
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
       "Posts validation failed: rating: Path `rating` is required."
     );
   });
 
-  test("Test Create Post with rating of empty string", async () => {
-    const response = await request.post("/posts").send({ ...post, rating: "" });
+  test("Test Create Post with rating not in range", async () => {
+    const response = await createPost({ ...post, rating: 6 });
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
-      "Posts validation failed: rating: Path `rating` is required."
+      "Posts validation failed: rating: Rating must be between 1 and 5"
+    );
+  });
+
+  test("Test Create Post with rating of 0", async () => {
+    const response = await createPost({ ...post, rating: 0 });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: rating: Rating must be between 1 and 5"
     );
   });
 
   test("Test Create Post without content", async () => {
     const { content, ...rest } = post;
-    const response = await request.post("/posts").send(rest);
+    const response = await createPost(rest);
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
       "Posts validation failed: content: Path `content` is required."
@@ -166,9 +211,7 @@ describe("Posts Tests", () => {
   });
 
   test("Test Create Post with content of empty string", async () => {
-    const response = await request
-      .post("/posts")
-      .send({ ...post, content: "" });
+    const response = await createPost({ ...post, content: "" });
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
       "Posts validation failed: content: Path `content` is required."
@@ -177,7 +220,7 @@ describe("Posts Tests", () => {
 
   test("Test Create Post without Image", async () => {
     const { imageUrl, ...rest } = post;
-    const response = await request.post("/posts").send(rest);
+    const response = await createPost(rest);
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
       "Posts validation failed: imageUrl: Path `imageUrl` is required."
@@ -185,9 +228,7 @@ describe("Posts Tests", () => {
   });
 
   test("Test Create Post with image url of empty string", async () => {
-    const response = await request
-      .post("/posts")
-      .send({ ...post, imageUrl: "" });
+    const response = await createPost({ ...post, imageUrl: "" });
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
       "Posts validation failed: imageUrl: Path `imageUrl` is required."
@@ -203,7 +244,7 @@ describe("Posts Tests", () => {
 
   test("Test get post by sender", async () => {
     const response = await request.get(
-      `/posts?restaurantId=${post.restaurantId}`
+      `/posts?restaurant=${post.restaurant}`
     );
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
@@ -223,6 +264,7 @@ describe("Posts Tests", () => {
     post.rating = 3;
     expect(response.statusCode).toBe(201);
     assertPost(response.body);
+    assertRestaurant(post.restaurant, 1, 3);
   });
 
   test("Test Update Post's Content", async () => {
@@ -251,16 +293,24 @@ describe("Posts Tests", () => {
   });
 
   test("Test Create Post 2", async () => {
-    const response = await request.post("/posts").send({
+    const restaurant = {
+      _id: "123",
+      name: "Test Restaurant 2",
+      category: "Test restaurnatCategory 2",
+    }
+    const response = await createPost({
       content: "Test Content 2",
-      restaurantId: "123 2",
-      restaurantName: "Test Restaurant 2",
-      restaurnatCategory: "Test restaurnatCategory 2",
-      restaurnatAddress: "Test restaurnatAddress 2",
+      restaurant: "123",
       rating: 4,
       imageUrl: "/public/image2.png",
-    });
+    }, restaurant);
     expect(response.statusCode).toBe(201);
+    secondPostId = response.body._id;
+
+    testRestaurant.name = restaurant.name;
+    testRestaurant.category = restaurant.category;
+
+    assertRestaurant(restaurant._id, 2, 3.5);
   });
 
   test("Posts test get all 2", async () => {
@@ -273,6 +323,13 @@ describe("Posts Tests", () => {
     const response = await request.delete(`/posts/${postId}`);
     expect(response.statusCode).toBe(200);
     assertPost(response.body);
+    assertRestaurant(post.restaurant, 1, 4);
+
+    const response2 = await request.delete(`/posts/${secondPostId}`);
+    expect(response2.statusCode).toBe(200);
+    const response3 = await request.get(`/restaurants/${post.restaurant}`);
+    expect(response3.statusCode).toBe(404);
+    expect(response3.text).toBe("not found");
   });
 
   test("Test get post by id that doesn't exist", async () => {
@@ -308,7 +365,7 @@ describe("Posts Tests", () => {
     expect(token).toBeDefined();
     const localRequest = supertest.agent(app).set({ authorization: `JWT ${token}` });
 
-    const postReposne = await localRequest.post("/posts").send(post);
+    const postReposne = await localRequest.post("/posts").send({post, restaurant: testRestaurant});
     expect(postReposne.statusCode).toBe(201);
     const postId = postReposne.body._id;
     
