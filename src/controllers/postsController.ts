@@ -28,10 +28,6 @@ class PostsController extends BaseController<IPost> {
     addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
       return { sender: res.locals.userId };
     }
-
-    addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
-      return { sender: res.locals.userId };
-    }
   }
 
   export default new PostsController();
