@@ -18,27 +18,46 @@ router.use(authMiddleware);
  *     Post:
  *       type: object
  *       required:
- *         - title
  *         - content
+ *         - restaurantId
+ *         - restaurantName
+ *         - restaurnatAddress
+ *         - rating
  *         - _id
  *         - sender
  *       properties:
  *         _id:
  *           type: string
  *           description: The auto-generated id of the post
- *         title:
- *           type: string
- *           description: The title of the post
  *         content:
  *           type: string
  *           description: The content of the post
+ *         restaurantId:
+ *           type: string
+ *           description: The restaurant id related to the post
+ *         restaurantName:
+ *           type: string
+ *           description: The name of the restaurant
+ *         restaurnatCategory:
+ *           type: string
+ *           description: The category of the restaurnat
+ *         restaurnatAddress:
+ *           type: string
+ *           description: The address of the restaurant
+ *         rating:
+ *           type: string
+ *           description: The rating of the restaurant
  *         sender:
  *           type: string
  *           description: The sender id of the post
  *       example:
  *         _id: 245234t234234r234r23f4
- *         title: My First Post
  *         content: This is the content of my first post.
+ *         restaurantId: 324vt23r4tr234t245tbv45by
+ *         restaurantName: My Restaurant
+ *         restaurnatCategory: Fast Food
+ *         restaurnatAddress: 1234 Main St, City, State, 12345
+ *         rating: 5
  *         sender: 324vt23r4tr234t245tbv45by
  */
 /**
@@ -58,6 +77,12 @@ router.use(authMiddleware);
  *           type: string
  *         required: false
  *         description: The sender ID to filter by the posts
+ *       - in: query
+ *         name: restaurantId
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The restaurant ID to filter by the posts
  *     responses:
  *       200:
  *         description: A list of posts
@@ -120,15 +145,30 @@ router.get("/:id", postsController.getById);
  *           schema:
  *             type: object
  *             properties:
- *               title:
- *                 type: string
- *                 description: The title of the post
  *               content:
  *                 type: string
  *                 description: The content of the post
+ *               restaurantId:
+ *                 type: string
+ *                 description: The restaurant id related to the post
+ *               restaurantName:
+ *                 type: string
+ *                 description: The name of the restaurant
+ *               restaurnatCategory:
+ *                 type: string
+ *                 description: The category of the restaurnat
+ *               restaurnatAddress:
+ *                 type: string
+ *                 description: The address of the restaurant
+ *               rating:
+ *                 type: string
+ *                 description: The rating of the restaurant
  *             required:
- *               - title
  *               - content
+ *               - restaurantId
+ *               - restaurantName
+ *               - restaurnatAddress
+ *               - rating
  *     responses:
  *       201:
  *         description: The new post
@@ -167,12 +207,12 @@ router.post("/", postsController.create);
  *           schema:
  *             type: object
  *             properties:
- *               title:
- *                 type: string
- *                 description: The title of the post
  *               content:
  *                 type: string
  *                 description: The content of the post
+ *               rating:
+ *                 type: string
+ *                 description: The rating of the restaurant
  *     responses:
  *       201:
  *         description: The post after the update
