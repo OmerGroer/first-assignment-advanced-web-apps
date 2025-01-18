@@ -46,10 +46,10 @@ router.use(authMiddleware);
  *           type: string
  *           description: The address of the restaurant
  *         rating:
- *           type: string
+ *           type: number
  *           description: The rating of the restaurant
  *         sender:
- *           type: string
+ *           $ref: '#/components/schemas/UserPost'
  *           description: The sender id of the post
  *         imageUrl:
  *           type: string
@@ -63,7 +63,30 @@ router.use(authMiddleware);
  *         restaurnatAddress: 1234 Main St, City, State, 12345
  *         rating: 5
  *         imageUrl: /public/324t23t4t23t4t23t4t.png
- *         sender: 324vt23r4tr234t245tbv45by
+ *         sender:
+ *           _id: 245234t234234r234r23f4
+ *           username: Omer
+ *           avatarUrl: /pulic/324t23t4t23t4t23t4t.png
+ *     UserPost:
+ *       type: object
+ *       required:
+ *         - _id
+ *         - username
+ *         - avatarUrl
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The auto-generated id of the user
+ *         username:
+ *           type: string
+ *           description: The username of the user
+ *         avatarUrl:
+ *           type: string
+ *           description: The url of the avatar of the user
+ *       example:
+ *         _id: 245234t234234r234r23f4
+ *         username: Omer
+ *         avatarUrl: /pulic/324t23t4t23t4t23t4t.png
  */
 /**
  * @swagger

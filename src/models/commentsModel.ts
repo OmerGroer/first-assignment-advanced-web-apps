@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 export interface IComments {
   content: string;
-  sender: string;
+  sender: Schema.Types.ObjectId;
   postId: string;
 }
 const commentsSchema = new mongoose.Schema<IComments>({
@@ -11,7 +11,8 @@ const commentsSchema = new mongoose.Schema<IComments>({
     required: true,
   },
   sender: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "Users",
     required: true,
   },
   postId: {

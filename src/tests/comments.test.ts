@@ -16,12 +16,6 @@ beforeAll(async () => {
   await postModel.deleteMany();
   await userModel.deleteMany();
 
-  const testUser: IUser = {
-    username: "Gal",
-    email: "Gal@gmail.com",
-    password: "secret",
-    avatarUrl: "/public/avatar.png"
-  };
   await supertest(app).post("/auth/register").send(testUser);
   const res = await supertest(app).post("/auth/login").send(testUser);
   senderId = res.body._id;
@@ -48,18 +42,33 @@ afterAll((done) => {
   done();
 });
 
-let senderId = "";
-let commentId = "";
-const comment: IComments = {
-  content: "This is a comment",
-  postId: "",
-  sender: ""
+type Comment = IComments & {
+  sender: { 
+    _id: string,
+    username: string,
+    avatarUrl: string,
+  };
 };
 
-const assertComment = (actualComment: IComments) => {
+const testUser: IUser = {
+  username: "Gal",
+  email: "Gal@gmail.com",
+  password: "secret",
+  avatarUrl: "/public/avatar.png"
+};
+let senderId = "";
+let commentId = "";
+const comment = {
+  content: "This is a comment",
+  postId: "",
+};
+
+const assertComment = (actualComment: Comment) => {
   expect(actualComment.content).toBe(comment.content);
   expect(actualComment.postId).toBe(comment.postId);
-  expect(actualComment.sender).toBe(senderId);
+  expect(actualComment.sender._id).toBe(senderId);
+  expect(actualComment.sender.username).toBe(testUser.username);
+  expect(actualComment.sender.avatarUrl).toBe(testUser.avatarUrl);
 }
 
 describe("Comments Tests", () => {
