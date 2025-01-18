@@ -151,6 +151,7 @@ describe("Users Tests", () => {
       username: "Meow",
       email: "meow@gmail.com",
       password: "secret",
+      avatarUrl: "/public/avatar.png"
     };
     const userReposnse = await supertest(app).post("/auth/register").send(testUser);
     const userId = userReposnse.body._id;

@@ -291,6 +291,7 @@ describe("Posts Tests", () => {
       username: "Omer",
       email: "Omer@gmail.com",
       password: "secret",
+      avatarUrl: "/public/avatar.png",
     }
     await supertest(app).post("/auth/register").send(testUser);
     const res = await supertest(app).post("/auth/login").send(testUser);
