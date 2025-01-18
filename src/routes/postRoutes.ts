@@ -126,6 +126,9 @@ router.get("/:id", postsController.getById);
  *               content:
  *                 type: string
  *                 description: The content of the post
+ *             example:
+ *               title: My First Post
+ *               content: This is the content of my first post.
  *             required:
  *               - title
  *               - content
@@ -145,7 +148,7 @@ router.post("/", postsController.create);
 
 /**
  * @swagger
- * /posts:
+ * /posts/{id}:
  *   put:
  *     summary: Update a post
  *     description: Uppdate a post
@@ -173,6 +176,9 @@ router.post("/", postsController.create);
  *               content:
  *                 type: string
  *                 description: The content of the post
+ *             example:
+ *               title: My First Post
+ *               content: This is the content of my first post.
  *     responses:
  *       201:
  *         description: The post after the update

@@ -129,6 +129,8 @@ router.get("/:id", commentsController.getById);
  *               content:
  *                 type: string
  *                 description: The content of the comment
+ *             example:
+ *               content: My First comment
  *             required:
  *               - content
  *     responses:
@@ -147,7 +149,7 @@ router.post("/", commentsController.create);
 
 /**
  * @swagger
- * /comments:
+ * /comments/{id}:
  *   put:
  *     summary: Update a comment
  *     description: Uppdate a comment
@@ -172,6 +174,8 @@ router.post("/", commentsController.create);
  *               content:
  *                 type: string
  *                 description: The content of the comment
+ *             example:
+ *               content: My First comment
  *     responses:
  *       201:
  *         description: The comment after the update
