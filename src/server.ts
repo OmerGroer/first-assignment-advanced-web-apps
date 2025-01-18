@@ -1,4 +1,11 @@
 import dotenv from "dotenv";
+
+if (process.env.NODE_ENV == "test") {
+  dotenv.config({ path: ".env.test" });
+} else {
+  dotenv.config();
+}
+
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import express, { Express } from "express";
@@ -6,14 +13,9 @@ import postsRoute from "./routes/postRoutes";
 import commentsRoute from "./routes/commentRoutes";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
+import fileRoute from "./routes/fileRoutes";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
-
-if (process.env.NODE_ENV == "test") {
-  dotenv.config({ path: ".env.test" });
-} else {
-  dotenv.config();
-}
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,6 +30,9 @@ app.use("/posts", postsRoute);
 app.use("/comments", commentsRoute);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/file", fileRoute);
+app.use("/public", express.static("public"));
+app.use(express.static("front"));
 
 const options = {
   definition: {
