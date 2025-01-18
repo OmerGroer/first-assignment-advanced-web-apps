@@ -22,7 +22,7 @@ class PostsController extends BaseController<IPost> {
     }
 
     getUpdateFields() {
-      return ["rating", "content"];
+      return ["rating", "content", "imageUrl"];
     }
   }
 
