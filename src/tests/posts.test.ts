@@ -37,8 +37,12 @@ afterAll((done) => {
 let senderId = "";
 let postId = "";
 const post = {
-  title: "Test Post",
   content: "Test Content",
+  restaurantId: "123",
+  restaurantName: "Test Restaurant",
+  restaurnatCategory: "Test restaurnatCategory",
+  restaurnatAddress: "Test restaurnatAddress",
+  rating: 5
 };
 
 describe("Posts Tests", () => {
@@ -51,28 +55,89 @@ describe("Posts Tests", () => {
   test("Test Create Post", async () => {
     const response = await request.post("/posts").send(post);
     expect(response.statusCode).toBe(201);
-    expect(response.body.title).toBe(post.title);
+    expect(response.body.restaurantId).toBe(post.restaurantId);
+    expect(response.body.restaurantName).toBe(post.restaurantName);
+    expect(response.body.restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body.restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body.rating).toBe(post.rating);
     expect(response.body.content).toBe(post.content);
     expect(response.body.sender).toBe(senderId);
     postId = response.body._id;
   });
 
-  test("Test Create Post without title", async () => {
-    const { title, ...rest } = post;
+  test("Test Create Post without restaurantId", async () => {
+    const { restaurantId, ...rest } = post;
     const response = await request.post("/posts").send(rest);
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
-      "Posts validation failed: title: Path `title` is required."
+      "Posts validation failed: restaurantId: Path `restaurantId` is required."
     );
   });
 
-  test("Test Create Post with title of empty string", async () => {
+  test("Test Create Post with restaurantId of empty string", async () => {
     const response = await request
       .post("/posts")
-      .send({ ...post, title: "" });
+      .send({ ...post, restaurantId: "" });
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
-      "Posts validation failed: title: Path `title` is required."
+      "Posts validation failed: restaurantId: Path `restaurantId` is required."
+    );
+  });
+
+  test("Test Create Post without restaurantName", async () => {
+    const { restaurantName, ...rest } = post;
+    const response = await request.post("/posts").send(rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: restaurantName: Path `restaurantName` is required."
+    );
+  });
+
+  test("Test Create Post with restaurantName of empty string", async () => {
+    const response = await request
+      .post("/posts")
+      .send({ ...post, restaurantName: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: restaurantName: Path `restaurantName` is required."
+    );
+  });
+
+  test("Test Create Post without restaurnatAddress", async () => {
+    const { restaurnatAddress, ...rest } = post;
+    const response = await request.post("/posts").send(rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: restaurnatAddress: Path `restaurnatAddress` is required."
+    );
+  });
+
+  test("Test Create Post with restaurnatAddress of empty string", async () => {
+    const response = await request
+      .post("/posts")
+      .send({ ...post, restaurnatAddress: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: restaurnatAddress: Path `restaurnatAddress` is required."
+    );
+  });
+
+  test("Test Create Post without rating", async () => {
+    const { rating, ...rest } = post;
+    const response = await request.post("/posts").send(rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: rating: Path `rating` is required."
+    );
+  });
+
+  test("Test Create Post with rating of empty string", async () => {
+    const response = await request
+      .post("/posts")
+      .send({ ...post, rating: "" });
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Posts validation failed: rating: Path `rating` is required."
     );
   });
 
@@ -99,7 +164,24 @@ describe("Posts Tests", () => {
     const response = await request.get(`/posts?sender=${senderId}`);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
-    expect(response.body[0].title).toBe(post.title);
+    expect(response.body[0].restaurantId).toBe(post.restaurantId);
+    expect(response.body[0].restaurantName).toBe(post.restaurantName);
+    expect(response.body[0].restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body[0].restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body[0].rating).toBe(post.rating);
+    expect(response.body[0].content).toBe(post.content);
+    expect(response.body[0].sender).toBe(senderId);
+  });
+
+  test("Test get post by sender", async () => {
+    const response = await request.get(`/posts?restaurantId=${post.restaurantId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].restaurantId).toBe(post.restaurantId);
+    expect(response.body[0].restaurantName).toBe(post.restaurantName);
+    expect(response.body[0].restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body[0].restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body[0].rating).toBe(post.rating);
     expect(response.body[0].content).toBe(post.content);
     expect(response.body[0].sender).toBe(senderId);
   });
@@ -107,18 +189,26 @@ describe("Posts Tests", () => {
   test("Test get post by id", async () => {
     const response = await request.get(`/posts/${postId}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.title).toBe(post.title);
+    expect(response.body.restaurantId).toBe(post.restaurantId);
+    expect(response.body.restaurantName).toBe(post.restaurantName);
+    expect(response.body.restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body.restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body.rating).toBe(post.rating);
     expect(response.body.content).toBe(post.content);
     expect(response.body.sender).toBe(senderId);
   });
 
-  test("Test Update Post's Title", async () => {
+  test("Test Update Post's rating", async () => {
     const response = await request.put(`/posts/${postId}`).send({
-      title: "The beginning of a new era",
+      rating: 3,
     });
-    post.title = "The beginning of a new era";
+    post.rating = 3;
     expect(response.statusCode).toBe(201);
-    expect(response.body.title).toBe(post.title);
+    expect(response.body.restaurantId).toBe(post.restaurantId);
+    expect(response.body.restaurantName).toBe(post.restaurantName);
+    expect(response.body.restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body.restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body.rating).toBe(post.rating);
     expect(response.body.content).toBe(post.content);
     expect(response.body.sender).toBe(senderId);
   });
@@ -129,7 +219,11 @@ describe("Posts Tests", () => {
     });
     post.content = "Welcome back today!";
     expect(response.statusCode).toBe(201);
-    expect(response.body.title).toBe(post.title);
+    expect(response.body.restaurantId).toBe(post.restaurantId);
+    expect(response.body.restaurantName).toBe(post.restaurantName);
+    expect(response.body.restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body.restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body.rating).toBe(post.rating);
     expect(response.body.content).toBe(post.content);
     expect(response.body.sender).toBe(senderId);
   });
@@ -138,15 +232,23 @@ describe("Posts Tests", () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(1);
-    expect(response.body[0].title).toBe(post.title);
+    expect(response.body[0].restaurantId).toBe(post.restaurantId);
+    expect(response.body[0].restaurantName).toBe(post.restaurantName);
+    expect(response.body[0].restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body[0].restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body[0].rating).toBe(post.rating);
     expect(response.body[0].content).toBe(post.content);
     expect(response.body[0].sender).toBe(senderId);
   });
 
   test("Test Create Post 2", async () => {
     const response = await request.post("/posts").send({
-      title: "Test Post 2",
-      content: "Test Content 2"
+      content: "Test Content 2",
+      restaurantId: "123 2",
+      restaurantName: "Test Restaurant 2",
+      restaurnatCategory: "Test restaurnatCategory 2",
+      restaurnatAddress: "Test restaurnatAddress 2",
+      rating: 4
     });
     expect(response.statusCode).toBe(201);
   });
@@ -160,7 +262,11 @@ describe("Posts Tests", () => {
   test("Test Delete Post", async () => {
     const response = await request.delete(`/posts/${postId}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.title).toBe(post.title);
+    expect(response.body.restaurantId).toBe(post.restaurantId);
+    expect(response.body.restaurantName).toBe(post.restaurantName);
+    expect(response.body.restaurnatCategory).toBe(post.restaurnatCategory);
+    expect(response.body.restaurnatAddress).toBe(post.restaurnatAddress);
+    expect(response.body.rating).toBe(post.rating);
     expect(response.body.content).toBe(post.content);
     expect(response.body.sender).toBe(senderId);
   });

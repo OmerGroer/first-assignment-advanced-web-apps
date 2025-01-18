@@ -280,8 +280,12 @@ describe("Auth Tests", () => {
       .post("/posts")
       .set({ authorization: "JWT " + user.accessToken })
       .send({
-        title: "Test Post",
         content: "Test Content",
+        restaurantId: "123",
+        restaurantName: "Test Restaurant",
+        restaurnatCategory: "Test restaurnatCategory",
+        restaurnatAddress: "Test restaurnatAddress",
+        rating: 5
       });
     expect(response2.statusCode).not.toBe(201);
 
@@ -295,8 +299,12 @@ describe("Auth Tests", () => {
       .post("/posts")
       .set({ authorization: "JWT " + user.accessToken })
       .send({
-        title: "Test Post",
         content: "Test Content",
+        restaurantId: "123",
+        restaurantName: "Test Restaurant",
+        restaurnatCategory: "Test restaurnatCategory",
+        restaurnatAddress: "Test restaurnatAddress",
+        rating: 5
       });
     expect(response4.statusCode).toBe(201);
   });

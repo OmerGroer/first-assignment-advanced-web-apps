@@ -30,8 +30,12 @@ beforeAll(async () => {
   request = supertest.agent(app).set({ authorization: `JWT ${token}` });
 
   const postResponse = await request.post("/posts").send({
-    title: "Test Post",
     content: "Test Content",
+    restaurantId: "123",
+    restaurantName: "Test Restaurant",
+    restaurnatCategory: "Test restaurnatCategory",
+    restaurnatAddress: "Test restaurnatAddress",
+    rating: 5
   });
   comment.postId = postResponse.body._id;
 });

@@ -18,11 +18,11 @@ class PostsController extends BaseController<IPost> {
     }
 
     getFilterFields() {
-      return ["sender"];
+      return ["sender", "restaurantId"];
     }
 
     getUpdateFields() {
-      return ["title", "content"];
+      return ["rating", "content"];
     }
 
     addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
