@@ -1,13 +1,4 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
-import bodyParser from "body-parser";
-import express, { Express } from "express";
-import postsRoute from "./routes/postRoutes";
-import commentsRoute from "./routes/commentRoutes";
-import userRoutes from "./routes/userRoutes";
-import authRoutes from "./routes/authRoutes";
-import swaggerJsDoc from "swagger-jsdoc";
-import swaggerUI from "swagger-ui-express";
 
 if (process.env.NODE_ENV == "test") {
   dotenv.config({ path: ".env.test" });
@@ -15,13 +6,33 @@ if (process.env.NODE_ENV == "test") {
   dotenv.config();
 }
 
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import express, { Express } from "express";
+import postsRoute from "./routes/postRoutes";
+import commentsRoute from "./routes/commentRoutes";
+import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
+import fileRoute from "./routes/fileRoutes";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
+
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "*");
+  next();
+});
 app.use("/posts", postsRoute);
 app.use("/comments", commentsRoute);
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/file", fileRoute);
+app.use("/public", express.static("public"));
+app.use(express.static("front"));
 
 const options = {
   definition: {

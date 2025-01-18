@@ -31,6 +31,7 @@ const user: User = {
   username: "Gal",
   email: "test@user.com",
   password: "testpassword",
+  avatarUrl: "/public/avatar.png"
 };
 
 describe("Auth Tests", () => {
@@ -87,6 +88,15 @@ describe("Auth Tests", () => {
     expect(response.statusCode).toBe(400);
     expect(response.body.message).toBe(
       "Users validation failed: password: Path `password` is required."
+    );
+  });
+
+  test("Test Create user without avatar", async () => {
+    const { avatarUrl, ...rest } = user;
+    const response = await request.post("/auth/register").send(rest);
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toBe(
+      "Users validation failed: avatarUrl: Path `avatarUrl` is required."
     );
   });
 
@@ -285,7 +295,8 @@ describe("Auth Tests", () => {
         restaurantName: "Test Restaurant",
         restaurnatCategory: "Test restaurnatCategory",
         restaurnatAddress: "Test restaurnatAddress",
-        rating: 5
+        rating: 5,
+        imageUrl: "/public/image.png",
       });
     expect(response2.statusCode).not.toBe(201);
 
@@ -304,7 +315,8 @@ describe("Auth Tests", () => {
         restaurantName: "Test Restaurant",
         restaurnatCategory: "Test restaurnatCategory",
         restaurnatAddress: "Test restaurnatAddress",
-        rating: 5
+        rating: 5,
+        imageUrl: "/public/image.png",
       });
     expect(response4.statusCode).toBe(201);
   });
