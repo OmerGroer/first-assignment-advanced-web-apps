@@ -289,15 +289,17 @@ describe("Auth Tests", () => {
     const response2 = await request
       .post("/posts")
       .set({ authorization: "JWT " + user.accessToken })
-      .send({
+      .send({post: {
         content: "Test Content",
-        restaurantId: "123",
-        restaurantName: "Test Restaurant",
-        restaurnatCategory: "Test restaurnatCategory",
-        restaurnatAddress: "Test restaurnatAddress",
+        restaurant: "123",
         rating: 5,
         imageUrl: "/public/image.png",
-      });
+      }, restaurant: {
+        name: "Test Restaurant",
+        category: "Test Category",
+        address: "Test Address",
+        priceTypes: "Test Price Types",
+      }});
     expect(response2.statusCode).not.toBe(201);
 
     const response3 = await request.post("/auth/refresh").send({
@@ -309,15 +311,17 @@ describe("Auth Tests", () => {
     const response4 = await request
       .post("/posts")
       .set({ authorization: "JWT " + user.accessToken })
-      .send({
+      .send({post: {
         content: "Test Content",
-        restaurantId: "123",
-        restaurantName: "Test Restaurant",
-        restaurnatCategory: "Test restaurnatCategory",
-        restaurnatAddress: "Test restaurnatAddress",
+        restaurant: "123",
         rating: 5,
         imageUrl: "/public/image.png",
-      });
+      }, restaurant: {
+        name: "Test Restaurant",
+        category: "Test Category",
+        address: "Test Address",
+        priceTypes: "Test Price Types",
+      }});
     expect(response4.statusCode).toBe(201);
   });
 });
