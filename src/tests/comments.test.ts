@@ -80,6 +80,18 @@ describe("Comments Tests", () => {
     expect(response.body.length).toBe(0);
   });
 
+  test("Test number of comments 0 in post", async () => {
+    const response = await request.get(`/posts/${comment.postId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.numberOfComments).toBe(0);
+  });
+
+  test("Test number of comments 0 in post in get all", async () => {
+    const response = await request.get(`/posts`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body[0].numberOfComments).toBe(0);
+  });
+
   test("Test Create Comment", async () => {
     const response = await request.post("/comments").send(comment);
     expect(response.statusCode).toBe(201);
@@ -87,13 +99,23 @@ describe("Comments Tests", () => {
     commentId = response.body._id;
   });
 
+  test("Test number of comments 1 in post", async () => {
+    const response = await request.get(`/posts/${comment.postId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.numberOfComments).toBe(1);
+  });
+
+  test("Test number of comments 1 in post in get all", async () => {
+    const response = await request.get(`/posts`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body[0].numberOfComments).toBe(1);
+  });
+
   test("Test Create Comment without post id", async () => {
     const { postId, ...rest } = comment;
     const response = await request.post("/comments").send(rest);
     expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe(
-      "Comments validation failed: postId: Path `postId` is required."
-    );
+    expect(response.text).toBe("Post not found");
   });
 
   test("Test Create Comment without content", async () => {
@@ -110,9 +132,7 @@ describe("Comments Tests", () => {
       .post("/comments")
       .send({ ...comment, postId: "" });
     expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe(
-      "Comments validation failed: postId: Path `postId` is required."
-    );
+    expect(response.text).toBe("Post not found");
   });
 
   test("Test Create Comment with content of empty string", async () => {
@@ -165,6 +185,18 @@ describe("Comments Tests", () => {
     const response = await request.delete(`/comments/${commentId}`);
     expect(response.statusCode).toBe(200);
     assertComment(response.body);
+  });
+
+  test("Test number of comments 0 in post after delete comment", async () => {
+    const response = await request.get(`/posts/${comment.postId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.numberOfComments).toBe(0);
+  });
+
+  test("Test number of comments 0 in post in get all after delete comment", async () => {
+    const response = await request.get(`/posts`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body[0].numberOfComments).toBe(0);
   });
 
   test("Test get comment by id that doesn't exist", async () => {

@@ -3,7 +3,7 @@ import mongoose, { Schema, Types } from "mongoose";
 export interface IComments {
   content: string;
   sender: Types.ObjectId;
-  postId: string;
+  postId: Types.ObjectId;
 }
 const commentsSchema = new mongoose.Schema<IComments>({
   content: {
@@ -16,7 +16,7 @@ const commentsSchema = new mongoose.Schema<IComments>({
     required: true,
   },
   postId: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
   },
 });
