@@ -46,6 +46,9 @@ router.use(authMiddleware);
  *         isLiked:
  *           type: boolean
  *           description: The post is liked by the user
+ *         numberOfComments:
+ *           type: number
+ *           description: The number of comments related to the post
  *       example:
  *         _id: 245234t234234r234r23f4
  *         content: This is the content of my first post.
@@ -55,6 +58,7 @@ router.use(authMiddleware);
  *         rating: 5
  *         imageUrl: /public/324t23t4t23t4t23t4t.png
  *         isLiked: true
+ *         numberOfComments: 5
  *         sender:
  *           _id: 245234t234234r234r23f4
  *           username: Omer

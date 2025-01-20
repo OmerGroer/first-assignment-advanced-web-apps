@@ -54,10 +54,19 @@ class PostsController extends BaseController<IPost> {
           }
         },
         {
+          $lookup: {
+            from: 'comments',
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'comments'
+          }
+        },
+        {
           $addFields: {
             isLiked: {
               $in: [new Types.ObjectId(res.locals.userId), '$likes.userId']
-            }
+            },
+            numberOfComments: { $size: '$comments' }
           }
         },
         {
@@ -75,7 +84,8 @@ class PostsController extends BaseController<IPost> {
             rating: 1,
             content: 1,
             imageUrl: 1,
-            isLiked: 1
+            isLiked: 1,
+            numberOfComments: 1,
           },
         },
       ];

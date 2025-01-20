@@ -15,6 +15,8 @@ class CommentsController extends BaseController<IComments> {
         if (!post) {
           throw new Error("Post not found")
         }
+      } else {
+        throw new Error("Post not found")
       }
 
       req.body.sender = res.locals.userId;
