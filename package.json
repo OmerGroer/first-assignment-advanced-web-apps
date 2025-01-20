@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "nodemon ./src/app.ts",
     "start": "tsc && node ./dist/app.js",
-    "test": "jest --detectOpenHandles --forceExit --coverage --runInBand",
+    "test": "jest --detectOpenHandles --forceExit --runInBand",
     "testAuth": "jest --detectOpenHandles --forceExit auth.test.ts",
-    "testPost": "jest --detectOpenHandles --forceExit posts.test.ts",
+    "testPost": "jest --detectOpenHandles --forceExit --runInBand posts.test.ts",
     "testFile": "jest --detectOpenHandles --forceExit file.test.ts",
     "lint": "eslint . --ext .ts"
   },

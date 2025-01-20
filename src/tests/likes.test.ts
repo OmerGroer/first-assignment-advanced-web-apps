@@ -59,10 +59,52 @@ const assertLike = (actualLike: ILikes) => {
 }
 
 describe("Likes Tests", () => {
+  test("Test isLiked false in post", async () => {
+    const response = await request.get(`/posts/${postId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.isLiked).toBe(false);
+  });
+
+  test("Test isLiked false in post in get all", async () => {
+    const response = await request.get(`/posts`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body[0].isLiked).toBe(false);
+  });
+
   test("Test Create Like", async () => {
     const response = await request.post("/likes").send({ postId });
     expect(response.statusCode).toBe(201);
     assertLike(response.body);
+  });
+
+  test("Test isLiked true in post", async () => {
+    const response = await request.get(`/posts/${postId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.isLiked).toBe(true);
+  });
+
+  test("Test isLiked true in post in get all", async () => {
+    const response = await request.get(`/posts`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body[0].isLiked).toBe(true);
+  });
+
+  test("Test isLiked false to another user", async () => {
+    const testUser: IUser = {
+      username: "Omer",
+      email: "Omer@gmail.com",
+      password: "secret",
+      avatarUrl: "/public/avatar.png",
+    }
+    await supertest(app).post("/auth/register").send(testUser);
+    const res = await supertest(app).post("/auth/login").send(testUser);
+    const token = res.body.accessToken;
+    expect(token).toBeDefined();
+    const localRequest = supertest.agent(app).set({ authorization: `JWT ${token}` });
+
+    const response = await localRequest.get(`/posts/${postId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.isLiked).toBe(false);
   });
 
   test("Test Create Like without post id", async () => {
@@ -81,6 +123,18 @@ describe("Likes Tests", () => {
     const response = await request.delete(`/likes/${postId}`);
     expect(response.statusCode).toBe(200);
     assertLike(response.body);
+  });
+
+  test("Test isLiked false in post after unlike", async () => {
+    const response = await request.get(`/posts/${postId}`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body.isLiked).toBe(false);
+  });
+
+  test("Test isLiked false in post in get all after unlike", async () => {
+    const response = await request.get(`/posts`);
+    expect(response.statusCode).toBe(200);
+    expect(response.body[0].isLiked).toBe(false);
   });
 
   test("Test Delete like with not existing id", async () => {

@@ -2,6 +2,7 @@ import postModel, { IPost } from "../models/postsModel";
 import BaseController from "./baseController";
 import { Request, Response } from "express";
 import restaurantModel from "../models/restaurantsModel";
+import { Types } from "mongoose";
 
 class PostsController extends BaseController<IPost> {
     constructor() {
@@ -20,8 +21,68 @@ class PostsController extends BaseController<IPost> {
       }
     }
 
+    getAggregatePipeline(req: Request, res: Response) {
+      return [
+        {
+          $lookup: {
+            from: "users",
+            localField: "sender",
+            foreignField: "_id",
+            as: "sender",
+          },
+        },
+        {
+          $unwind: "$sender",
+        },
+        {
+          $lookup: {
+            from: "restaurants",
+            localField: "restaurant",
+            foreignField: "_id",
+            as: "restaurant",
+          },
+        },
+        {
+          $unwind: "$restaurant",
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            localField: '_id',
+            foreignField: 'postId',
+            as: 'likes'
+          }
+        },
+        {
+          $addFields: {
+            isLiked: {
+              $in: [new Types.ObjectId(res.locals.userId), '$likes.userId']
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            sender: {
+              _id: 1,
+              username: 1,
+              avatarUrl: 1,
+            },
+            restaurant: {
+              _id: 1,
+              name: 1,
+            },
+            rating: 1,
+            content: 1,
+            imageUrl: 1,
+            isLiked: 1
+          },
+        },
+      ];
+    }
+
     getFilterFields() {
-      return ["sender", "restaurant"];
+      return [{key: "sender", value: Types.ObjectId}, "restaurant"];
     }
 
     getUpdateFields() {
