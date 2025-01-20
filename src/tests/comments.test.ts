@@ -139,7 +139,7 @@ describe("Comments Tests", () => {
     assertComment(response.body[0]);
   });
 
-  test("Comments get post by id", async () => {
+  test("Comments get by id", async () => {
     const response = await request.get(`/comments/${commentId}`);
     expect(response.statusCode).toBe(200);
     assertComment(response.body);

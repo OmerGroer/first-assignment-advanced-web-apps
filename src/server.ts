@@ -15,6 +15,7 @@ import userRoutes from "./routes/userRoutes";
 import restaurantRoutes from "./routes/restaurantRoutes";
 import authRoutes from "./routes/authRoutes";
 import fileRoute from "./routes/fileRoutes";
+import likeRoues from "./routes/likeRoutes";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 
@@ -33,6 +34,7 @@ app.use("/users", userRoutes);
 app.use("/restaurants", restaurantRoutes);
 app.use("/auth", authRoutes);
 app.use("/file", fileRoute);
+app.use("/likes", likeRoues);
 app.use("/public", express.static("public"));
 app.use(express.static("front"));
 

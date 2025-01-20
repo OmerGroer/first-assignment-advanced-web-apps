@@ -43,6 +43,9 @@ router.use(authMiddleware);
  *         imageUrl:
  *           type: string
  *           description: The url of the image of the post
+ *         isLiked:
+ *           type: boolean
+ *           description: The post is liked by the user
  *       example:
  *         _id: 245234t234234r234r23f4
  *         content: This is the content of my first post.
@@ -51,6 +54,7 @@ router.use(authMiddleware);
  *           name: My Restaurant
  *         rating: 5
  *         imageUrl: /public/324t23t4t23t4t23t4t.png
+ *         isLiked: true
  *         sender:
  *           _id: 245234t234234r234r23f4
  *           username: Omer
@@ -176,42 +180,59 @@ router.get("/:id", postsController.getById);
  *           schema:
  *             type: object
  *             properties:
- *               content:
- *                 type: string
- *                 description: The content of the post
- *               restaurantId:
- *                 type: string
- *                 description: The restaurant id related to the post
- *               restaurantName:
- *                 type: string
- *                 description: The name of the restaurant
- *               restaurnatCategory:
- *                 type: string
- *                 description: The category of the restaurnat
- *               restaurnatAddress:
- *                 type: string
- *                 description: The address of the restaurant
- *               rating:
- *                 type: number
- *                 description: The rating of the restaurant
- *               imageUrl:
- *                 type: string
- *                 description: The url of the image of the post
+ *               post:
+ *                 type: object
+ *                 properties:
+ *                   content:
+ *                     type: string
+ *                     description: The content of the post
+ *                   restaurant:
+ *                     type: string
+ *                     description: The restaurant id related to the post
+ *                   rating:
+ *                     type: number
+ *                     description: The rating of the restaurant
+ *                   imageUrl:
+ *                     type: string
+ *                     description: The url of the image of the post
+ *                 required:
+ *                   - content
+ *                   - restaurant
+ *                   - rating
+ *                   - imageUrl
+ *               restaurant:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     description: The name of the restaurant
+ *                   category:
+ *                     type: string
+ *                     description: The category of the restaurant
+ *                   address:
+ *                     type: string
+ *                     description: The address of the restaurant
+ *                   priceTypes:
+ *                     type: string
+ *                     description: The price types of the restaurant
+ *                 required:
+ *                   - name
+ *                   - address
+ *                   - priceTypes
  *             example:
- *               content: This is the content of my first post.
- *               restaurantId: 324vt23r4tr234t245tbv45by
- *               restaurantName: My Restaurant
- *               restaurnatCategory: Fast Food
- *               restaurnatAddress: 1234 Main St, City, State, 12345
- *               rating: 5
- *               imageUrl: /public/324t23t4t23t4t23t4t.png
+ *               post:
+ *                 content: This is the content of my first post.
+ *                 restaurant: 324vt23r4tr234t245tbv45by
+ *                 rating: 5
+ *                 imageUrl: /public/324t23t4t23t4t23t4t.png
+ *               restaurant:
+ *                 name: My Restaurant
+ *                 category: Fast Food
+ *                 address: 1234 Main St, City, State, 12345
+ *                 priceTypes: $$ - $$$
  *             required:
- *               - content
- *               - restaurantId
- *               - restaurantName
- *               - restaurnatAddress
- *               - rating
- *               - imageUrl
+ *               - post
+ *               - restaurant
  *     responses:
  *       201:
  *         description: The new post
