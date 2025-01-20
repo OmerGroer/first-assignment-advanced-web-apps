@@ -1,8 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 export interface IComments {
   content: string;
-  sender: Schema.Types.ObjectId;
+  sender: Types.ObjectId;
   postId: string;
 }
 const commentsSchema = new mongoose.Schema<IComments>({

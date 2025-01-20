@@ -8,7 +8,7 @@ router.use(authMiddleware);
 /**
  * @swagger
  * tags:
- *   name: Restaurnats
+ *   name: Restaurants
  *   description: The Restaurants API
  */
 /**
