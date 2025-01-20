@@ -129,8 +129,12 @@ router.get("/:id", commentsController.getById);
  *               content:
  *                 type: string
  *                 description: The content of the comment
+ *               postId:
+ *                 type: string
+ *                 description: The post ID of the comment
  *             example:
  *               content: My First comment
+ *               postId: 2f5ft23r4tr234t3698bv4vf5
  *             required:
  *               - content
  *     responses:
