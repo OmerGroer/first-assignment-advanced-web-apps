@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { IPagingModel } from "../controllers/pagingController";
 
-export interface IRestaurant {
+export interface IRestaurant extends IPagingModel {
   _id: string;
   name: string;
   category?: string;
@@ -36,7 +37,14 @@ const restaurantSchema = new mongoose.Schema<IRestaurant>({
     type: Number,
     required: true,
   },
+  creationTime: {
+    type: Date,
+    required: true,
+    default: Date.now
+  }
 });
+
+restaurantSchema.index({ creationTime: -1 });
 
 const restaurantModel = mongoose.model<IRestaurant>("Restaurants", restaurantSchema);
 

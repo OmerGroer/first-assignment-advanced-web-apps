@@ -77,7 +77,7 @@ describe("Comments Tests", () => {
   test("Comments test get all", async () => {
     const response = await request.get("/comments");
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(0);
+    expect(response.body.data.length).toBe(0);
   });
 
   test("Test number of comments 0 in post", async () => {
@@ -89,7 +89,7 @@ describe("Comments Tests", () => {
   test("Test number of comments 0 in post in get all", async () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
-    expect(response.body[0].numberOfComments).toBe(0);
+    expect(response.body.data[0].numberOfComments).toBe(0);
   });
 
   test("Test Create Comment", async () => {
@@ -108,7 +108,7 @@ describe("Comments Tests", () => {
   test("Test number of comments 1 in post in get all", async () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
-    expect(response.body[0].numberOfComments).toBe(1);
+    expect(response.body.data[0].numberOfComments).toBe(1);
   });
 
   test("Test Create Comment without post id", async () => {
@@ -148,15 +148,15 @@ describe("Comments Tests", () => {
   test("Comments test get all", async () => {
     const response = await request.get("/comments");
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertComment(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertComment(response.body.data[0]);
   });
 
   test("Test get comment by sender", async () => {
     const response = await request.get(`/comments?sender=${senderId}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertComment(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertComment(response.body.data[0]);
   });
 
   test("Comments get by id", async () => {
@@ -168,8 +168,8 @@ describe("Comments Tests", () => {
   test("Test get comment by post id", async () => {
     const response = await request.get(`/comments?postId=${comment.postId}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertComment(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertComment(response.body.data[0]);
   });
 
   test("Test Update Comment", async () => {
@@ -196,7 +196,7 @@ describe("Comments Tests", () => {
   test("Test number of comments 0 in post in get all after delete comment", async () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
-    expect(response.body[0].numberOfComments).toBe(0);
+    expect(response.body.data[0].numberOfComments).toBe(0);
   });
 
   test("Test get comment by id that doesn't exist", async () => {
@@ -247,6 +247,41 @@ describe("Comments Tests", () => {
     const response2 = await request.delete(`/comments/${commentId}`);
     expect(response2.statusCode).toBe(404);
     expect(response2.text).toBe("not found");
+  });
+
+  test("Test Comment Pagination", async () => {
+    await commentsModel.deleteMany();
+
+    const firstId = (await request.post("/comments").send(comment)).body._id;
+    const secondId = (await request.post("/comments").send(comment)).body._id;
+    const thirdId = (await request.post("/comments").send(comment)).body._id;
+
+    const response = await request.get("/comments");
+    expect(response.statusCode).toBe(200);
+    expect(response.body.data.length).toBe(2);
+    expect(response.body.data[0]._id).toBe(thirdId)
+    expect(response.body.data[1]._id).toBe(secondId)
+    let min = response.body.min
+    let max = response.body.max
+
+    const response2 = await request.get(`/comments?min=${min}&max=${max}`);
+    expect(response2.statusCode).toBe(200);
+    expect(response2.body.data.length).toBe(1);
+    expect(response2.body.data[0]._id).toBe(firstId)
+    min = response2.body.min
+    max = response2.body.max
+
+    const response3 = await request.get(`/comments?min=${min}&max=${max}`);
+    expect(response3.statusCode).toBe(200);
+    expect(response3.body.data.length).toBe(0);
+    expect(response3.body.min).toBe(min)
+    expect(response3.body.max).toBe(max)
+
+    const fourthId = (await request.post("/comments").send(comment)).body._id;
+    const response4 = await request.get(`/comments?min=${min}&max=${max}`);
+    expect(response4.statusCode).toBe(200);
+    expect(response4.body.data.length).toBe(1);
+    expect(response4.body.data[0]._id).toBe(fourthId)
   });
 
   test("Test Create Comment to post that does not exist", async () => {

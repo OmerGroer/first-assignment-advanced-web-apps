@@ -35,10 +35,14 @@ router.use(authMiddleware);
  *         sender:
  *           $ref: '#/components/schemas/UserPost'
  *           description: The sender id of the comment
+ *         creationTime:
+ *           type: date
+ *           description: The creation time of the post
  *       example:
  *         _id: 245234t234234r234r23f4
  *         content: My First comment
  *         postId: 2f5ft23r4tr234t3698bv4vf5
+ *         creationTime: 2025-01-22T14:04:07.120Z
  *         sender:
  *           _id: 245234t234234r234r23f4
  *           username: Omer
@@ -67,15 +71,36 @@ router.use(authMiddleware);
  *           type: string
  *         required: false
  *         description: The post ID to filter by the comments
+ *       - in: query
+ *         name: min
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The lowest date of comment I have to get more farther comments
+ *       - in: query
+ *         name: max
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The highest date of comment I have to get more recent comments
  *     responses:
  *       200:
  *         description: A list of comments
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Comment'
+ *               type: object
+ *               properties:
+ *                 min:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 max:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Comment'
  *       500:
  *         description: Server error
  */

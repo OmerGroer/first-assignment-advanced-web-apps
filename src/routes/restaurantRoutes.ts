@@ -46,6 +46,9 @@ router.use(authMiddleware);
  *         ratingCount:
  *           type: number
  *           description: The rating count of the restaurant
+ *         creationTime:
+ *           type: date
+ *           description: The creation time of the post
  *       example:
  *         _id: 234t234t234t234t234t234t
  *         name: My Restaurant
@@ -54,6 +57,7 @@ router.use(authMiddleware);
  *         priceTypes: $$ - $$$
  *         rating: 4.5
  *         ratingCount: 100
+ *         creationTime: 2025-01-22T14:04:07.120Z
  */
 /**
  * @swagger
@@ -65,15 +69,37 @@ router.use(authMiddleware);
  *       - Restaurants
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: min
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The lowest date of user I have to get more farther users
+ *       - in: query
+ *         name: max
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The highest date of user I have to get more recent users
  *     responses:
  *       200:
  *         description: A list of restaurants
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Restaurant'
+ *               type: object
+ *               properties:
+ *                 min:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 max:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Restaurant'
  *       500:
  *         description: Server error
  */

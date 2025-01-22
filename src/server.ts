@@ -8,6 +8,7 @@ if (process.env.NODE_ENV == "test") {
 
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import cors from "cors";
 import express, { Express } from "express";
 import postsRoute from "./routes/postRoutes";
 import commentsRoute from "./routes/commentRoutes";
@@ -22,6 +23,11 @@ import swaggerUI from "swagger-ui-express";
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors({
+  origin: '*',
+  methods: '*',
+  allowedHeaders: '*'
+}));
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");

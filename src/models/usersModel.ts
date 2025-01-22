@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { IPagingModel } from "../controllers/pagingController";
 
-export interface IUser {
+export interface IUser extends IPagingModel {
   username: string;
   email: string;
   password: string;
@@ -31,8 +32,15 @@ const userSchema = new mongoose.Schema<IUser>({
   refreshToken: {
     type: [String],
     default: [],
+  },
+  creationTime: {
+    type: Date,
+    required: true,
+    default: Date.now
   }
 });
+
+userSchema.index({ creationTime: -1 });
 
 const userModel = mongoose.model<IUser>("Users", userSchema);
 
