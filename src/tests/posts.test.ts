@@ -379,4 +379,40 @@ describe("Posts Tests", () => {
     expect(response2.statusCode).toBe(404);
     expect(response2.text).toBe("not found");
   });
+
+  test("Test Post Pagination", async () => {
+    await postModel.deleteMany();
+    await restaurantModel.deleteMany();
+
+    const firstId = (await createPost(post)).body._id;
+    const secondId = (await createPost(post)).body._id;
+    const thirdId = (await createPost(post)).body._id;
+
+    const response = await request.get("/posts");
+    expect(response.statusCode).toBe(200);
+    expect(response.body.data.length).toBe(2);
+    expect(response.body.data[0]._id).toBe(thirdId)
+    expect(response.body.data[1]._id).toBe(secondId)
+    let min = response.body.min
+    let max = response.body.max
+
+    const response2 = await request.get(`/posts?min=${min}&max=${max}`);
+    expect(response2.statusCode).toBe(200);
+    expect(response2.body.data.length).toBe(1);
+    expect(response2.body.data[0]._id).toBe(firstId)
+    min = response2.body.min
+    max = response2.body.max
+
+    const response3 = await request.get(`/posts?min=${min}&max=${max}`);
+    expect(response3.statusCode).toBe(200);
+    expect(response3.body.data.length).toBe(0);
+    expect(response3.body.min).toBe(min)
+    expect(response3.body.max).toBe(max)
+
+    const fourthId = (await createPost(post)).body._id;
+    const response4 = await request.get(`/posts?min=${min}&max=${max}`);
+    expect(response4.statusCode).toBe(200);
+    expect(response4.body.data.length).toBe(1);
+    expect(response4.body.data[0]._id).toBe(fourthId)
+  });
 });
