@@ -137,6 +137,7 @@ class PostsController extends PagingController<IPost> {
             category: resturantDb.category,
             address: resturantDb.address,
             priceTypes: resturantDb.priceTypes,
+            creationTime: { $ifNull: ["$field", new Date()] },
             ratingCount: { $add: [{ $ifNull: ["$ratingCount", 0] }, 1] },
             rating: {
               $divide: [

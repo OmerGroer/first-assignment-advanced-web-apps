@@ -5,6 +5,7 @@ import { Express } from "express";
 import postModel from "../models/postsModel";
 import userModel, { IUser } from "../models/usersModel";
 import likesModel, { ILikes } from "../models/likesModel";
+import restaurantModel from "../models/restaurantsModel";
 
 var app: Express;
 var request: Agent;
@@ -14,6 +15,7 @@ beforeAll(async () => {
   app = await initApp();
   await likesModel.deleteMany();
   await postModel.deleteMany();
+  await restaurantModel.deleteMany();
   await userModel.deleteMany();
 
   await supertest(app).post("/auth/register").send(testUser);
