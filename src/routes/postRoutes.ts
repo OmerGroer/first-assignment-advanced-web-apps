@@ -49,6 +49,9 @@ router.use(authMiddleware);
  *         numberOfComments:
  *           type: number
  *           description: The number of comments related to the post
+ *         creationTime:
+ *           type: date
+ *           description: The creation time of the post
  *       example:
  *         _id: 245234t234234r234r23f4
  *         content: This is the content of my first post.
@@ -59,10 +62,11 @@ router.use(authMiddleware);
  *         imageUrl: /public/324t23t4t23t4t23t4t.png
  *         isLiked: true
  *         numberOfComments: 5
+ *         creationTime: 2025-01-22T14:04:07.120Z
  *         sender:
  *           _id: 245234t234234r234r23f4
  *           username: Omer
- *           avatarUrl: /pulic/324t23t4t23t4t23t4t.png
+ *           avatarUrl: /public/324t23t4t23t4t23t4t.png
  *     UserPost:
  *       type: object
  *       required:
@@ -82,7 +86,7 @@ router.use(authMiddleware);
  *       example:
  *         _id: 245234t234234r234r23f4
  *         username: Omer
- *         avatarUrl: /pulic/324t23t4t23t4t23t4t.png
+ *         avatarUrl: /public/324t23t4t23t4t23t4t.png
  *     RestaurantPost:
  *       type: object
  *       required:
@@ -122,15 +126,36 @@ router.use(authMiddleware);
  *           type: string
  *         required: false
  *         description: The restaurant ID to filter by the posts
+ *       - in: query
+ *         name: min
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The lowest date of post I have to get more farther posts
+ *       - in: query
+ *         name: max
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The highest date of post I have to get more recent posts
  *     responses:
  *       200:
  *         description: A list of posts
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Post'
+ *               type: object
+ *               properties:
+ *                 min:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 max:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Post'
  *       500:
  *         description: Server error
  */

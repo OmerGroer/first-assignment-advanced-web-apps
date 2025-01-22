@@ -68,7 +68,7 @@ describe("Likes Tests", () => {
   test("Test isLiked false in post in get all", async () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
-    expect(response.body[0].isLiked).toBe(false);
+    expect(response.body.data[0].isLiked).toBe(false);
   });
 
   test("Test Create Like", async () => {
@@ -86,7 +86,7 @@ describe("Likes Tests", () => {
   test("Test isLiked true in post in get all", async () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
-    expect(response.body[0].isLiked).toBe(true);
+    expect(response.body.data[0].isLiked).toBe(true);
   });
 
   test("Test isLiked false to another user", async () => {
@@ -134,7 +134,7 @@ describe("Likes Tests", () => {
   test("Test isLiked false in post in get all after unlike", async () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
-    expect(response.body[0].isLiked).toBe(false);
+    expect(response.body.data[0].isLiked).toBe(false);
   });
 
   test("Test Delete like with not existing id", async () => {

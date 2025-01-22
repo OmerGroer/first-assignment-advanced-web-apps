@@ -96,7 +96,7 @@ describe("Posts Tests", () => {
   test("Posts test get all", async () => {
     const response = await request.get("/posts");
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(0);
+    expect(response.body.data.length).toBe(0);
   });
 
   test("Test Create Post without restaurant name of new restaurant", async () => {
@@ -238,8 +238,8 @@ describe("Posts Tests", () => {
   test("Test get post by sender", async () => {
     const response = await request.get(`/posts?sender=${senderId}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertPost(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertPost(response.body.data[0]);
   });
 
   test("Test get post by sender", async () => {
@@ -247,8 +247,8 @@ describe("Posts Tests", () => {
       `/posts?restaurant=${post.restaurant}`
     );
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertPost(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertPost(response.body.data[0]);
   });
 
   test("Test get post by id", async () => {
@@ -288,8 +288,8 @@ describe("Posts Tests", () => {
   test("Test get all posts", async () => {
     const response = await request.get(`/posts`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertPost(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertPost(response.body.data[0]);
   });
 
   test("Test Create Post 2", async () => {
@@ -316,7 +316,7 @@ describe("Posts Tests", () => {
   test("Posts test get all 2", async () => {
     const response = await request.get("/posts");
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body.data.length).toBe(2);
   });
 
   test("Test Delete Post", async () => {

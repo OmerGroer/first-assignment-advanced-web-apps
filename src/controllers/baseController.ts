@@ -23,32 +23,50 @@ class BaseController<T> {
 
   async getAll(req: Request, res: Response) {
     try {
-      const filter: { [key: string]: any } = {};
+      const filter: { [key: string]: any } = res.locals.additionalFilter || {};
       for (const field of this.getFilterFields()) {
         if (typeof field === "string") {
           if (req.query[field]) filter[field] = req.query[field];
         } else {
-          const Constructor = field.value
-          if (req.query[field.key]) filter[field.key] = new Constructor(req.query[field.key]);
+          const value = req.query[field.key];
+          if (typeof value === "string") {
+            filter[field.key] = field.value(value);
+          }
         }
       }
 
       const getItems = async () => {
+        const limit = this.getLimit();
         const pipline = this.getAggregatePipeline(req, res);
         if (pipline.length > 0) {
           pipline.unshift({ $match: filter as RootFilterQuery<T> });
+          if (limit !== Infinity) {
+            pipline.push({ $sort: { creationTime: -1 } })
+            pipline.push({ $limit: limit })
+          }
           return await this.model.aggregate(pipline);
         } else {
-          return await this.populateResponse(
-            this.model.find(filter as RootFilterQuery<T>)
-          );
+          let query = this.model.find(filter as RootFilterQuery<T>);
+          if (limit !== Infinity) {
+            query = query.sort({ creationTime: -1 }).limit(limit)
+          }
+          return await this.populateResponse(query);
         }
       };
 
-      res.send(await getItems());
+      const data = await getItems();
+      res.send({ ...this.getMetaData(data, req, res), data });
     } catch (error) {
       res.status(400).send(error);
     }
+  }
+
+  getMetaData(data: T[], req: Request, res: Response): { [key: string]: any } {
+    return {};
+  }
+
+  getLimit(): number {
+    return Infinity;
   }
 
   getAggregatePipeline(req: Request, res: Response): any[] {
@@ -69,7 +87,7 @@ class BaseController<T> {
     return new Map<string, string>();
   }
 
-  getFilterFields(): (string | {key: string, value: any})[] {
+  getFilterFields(): (string | { key: string; value: (key: string) => any })[] {
     return [];
   }
 

@@ -1,10 +1,10 @@
 import postModel, { IPost } from "../models/postsModel";
-import BaseController from "./baseController";
 import { Request, Response } from "express";
 import restaurantModel from "../models/restaurantsModel";
 import { Types } from "mongoose";
+import PagingController from "./pagingController";
 
-class PostsController extends BaseController<IPost> {
+class PostsController extends PagingController<IPost> {
     constructor() {
       super(postModel);
     }
@@ -86,13 +86,14 @@ class PostsController extends BaseController<IPost> {
             imageUrl: 1,
             isLiked: 1,
             numberOfComments: 1,
+            creationTime: 1
           },
         },
       ];
     }
 
     getFilterFields() {
-      return [{key: "sender", value: Types.ObjectId}, "restaurant"];
+      return [...super.getFilterFields(), {key: "sender", value: (key: string) => new Types.ObjectId(key)}, "restaurant"];
     }
 
     getUpdateFields() {

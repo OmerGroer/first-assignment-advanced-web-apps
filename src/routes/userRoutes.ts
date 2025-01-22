@@ -40,12 +40,16 @@ router.use(authMiddleware);
  *         avatarUrl:
  *           type: string
  *           description: The url of the avatar of the user
+ *         creationTime:
+ *           type: date
+ *           description: The creation time of the post
  *       example:
  *         _id: 245234t234234r234r23f4
  *         username: Omer
  *         email: Omer@gmail.com
  *         avatarUrl: /pulic/324t23t4t23t4t23t4t.png
  *         password: 324vt23r4tr234t245tbv45by
+ *         creationTime: 2025-01-22T14:04:07.120Z
  */
 /**
  * @swagger
@@ -70,15 +74,36 @@ router.use(authMiddleware);
  *           type: string
  *         required: false
  *         description: The email to filter by the users
+ *       - in: query
+ *         name: min
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The lowest date of user I have to get more farther users
+ *       - in: query
+ *         name: max
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The highest date of user I have to get more recent users
  *     responses:
  *       200:
  *         description: A list of users
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 min:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 max:
+ *                   type: string
+ *                   example: "2025-01-22T14:04:07.120Z"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
  *       500:
  *         description: Server error
  */

@@ -1,9 +1,9 @@
 import userModel, { IUser } from "../models/usersModel";
 import { NextFunction, Request, Response } from "express";
-import BaseController from "./baseController";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Document } from "mongoose";
+import PagingController from "./pagingController";
 
 type Payload = {
   _id: string;
@@ -108,7 +108,7 @@ const verifyRefreshToken = (refreshToken: string | undefined) => {
   });
 };
 
-class UsersController extends BaseController<IUser> {
+class UsersController extends PagingController<IUser> {
   constructor() {
     super(userModel);
 
@@ -148,7 +148,7 @@ class UsersController extends BaseController<IUser> {
   }
 
   getFilterFields() {
-    return ["username", "email"];
+    return [...super.getFilterFields(), "username", "email"];
   }
 
   getUpdateFields() {

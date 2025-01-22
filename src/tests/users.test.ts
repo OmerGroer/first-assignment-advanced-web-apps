@@ -48,15 +48,15 @@ describe("Users Tests", () => {
   test("Test get user by username", async () => {
     const response = await request.get(`/users?username=${user.username}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertUser(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertUser(response.body.data[0]);
   });
 
   test("Test get user by email", async () => {
     const response = await request.get(`/users?email=${user.email}`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertUser(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertUser(response.body.data[0]);
   });
 
   test("Test get user by id", async () => {
@@ -119,8 +119,8 @@ describe("Users Tests", () => {
   test("Test get all users", async () => {
     const response = await request.get(`/users`);
     expect(response.statusCode).toBe(200);
-    expect(response.body.length).toBe(1);
-    assertUser(response.body[0]);
+    expect(response.body.data.length).toBe(1);
+    assertUser(response.body.data[0]);
   });
 
   test("Test Update User with duplicate email", async () => {

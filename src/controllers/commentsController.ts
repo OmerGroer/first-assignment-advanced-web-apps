@@ -1,9 +1,9 @@
 import commentsModel, { IComments } from "../models/commentsModel";
 import { Request, Response } from "express";
-import BaseController from "./baseController";
 import postModel from "../models/postsModel";
+import PagingController from "./pagingController";
 
-class CommentsController extends BaseController<IComments> {
+class CommentsController extends PagingController<IComments> {
   constructor() {
     super(commentsModel);
   }
@@ -28,7 +28,7 @@ class CommentsController extends BaseController<IComments> {
   }
 
   getFilterFields() {
-    return ["sender", "postId"];
+    return [...super.getFilterFields(), "sender", "postId"];
   }
 
   getUpdateFields() {

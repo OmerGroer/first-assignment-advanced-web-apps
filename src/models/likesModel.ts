@@ -17,6 +17,8 @@ const likesSchema = new mongoose.Schema<ILikes>({
   },
 });
 
+likesSchema.index({ postId: 1 });
+
 const likesModel = mongoose.model<ILikes>("Likes", likesSchema);
 
 export default likesModel;

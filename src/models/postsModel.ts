@@ -1,6 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
+import { IPagingModel } from "../controllers/pagingController";
 
-export interface IPost {
+export interface IPost extends IPagingModel {
   content: string;
   sender: Types.ObjectId;
   imageUrl: string;
@@ -35,7 +36,14 @@ const postSchema = new mongoose.Schema<IPost>({
     type: String,
     required: true,
   },
+  creationTime: {
+    type: Date,
+    required: true,
+    default: Date.now
+  }
 });
+
+postSchema.index({ creationTime: -1 });
 
 const postModel = mongoose.model<IPost>("Posts", postSchema);
 
