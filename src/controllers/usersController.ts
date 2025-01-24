@@ -168,7 +168,7 @@ class UsersController extends PagingController<IUser> {
         ],
       });
       if (!user) {
-        res.status(400).send("wrong username/email or password");
+        res.status(400).send("Wrong username/email or password");
         return;
       }
 
@@ -177,7 +177,7 @@ class UsersController extends PagingController<IUser> {
         user.password
       );
       if (!validPassword) {
-        res.status(400).send("wrong username/email or password");
+        res.status(400).send("Wrong username/email or password");
         return;
       }
 
