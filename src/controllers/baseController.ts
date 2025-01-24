@@ -40,15 +40,17 @@ class BaseController<T> {
         const pipline = this.getAggregatePipeline(req, res);
         if (pipline.length > 0) {
           pipline.unshift({ $match: filter as RootFilterQuery<T> });
+          pipline.push({ $sort: { creationTime: -1 } });
           if (limit !== Infinity) {
-            pipline.push({ $sort: { creationTime: -1 } })
-            pipline.push({ $limit: limit })
+            pipline.push({ $limit: limit });
           }
           return await this.model.aggregate(pipline);
         } else {
-          let query = this.model.find(filter as RootFilterQuery<T>);
+          let query = this.model
+            .find(filter as RootFilterQuery<T>)
+            .sort({ creationTime: -1 });
           if (limit !== Infinity) {
-            query = query.sort({ creationTime: -1 }).limit(limit)
+            query = query.limit(limit);
           }
           return await this.populateResponse(query);
         }

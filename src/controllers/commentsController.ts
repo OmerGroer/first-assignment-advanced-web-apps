@@ -13,10 +13,10 @@ class CommentsController extends PagingController<IComments> {
       if (req.body.postId) {
         const post = await postModel.findById(req.body.postId);
         if (!post) {
-          throw new Error("Post not found")
+          throw new Error("Post not found");
         }
       } else {
-        throw new Error("Post not found")
+        throw new Error("Post not found");
       }
 
       req.body.sender = res.locals.userId;
@@ -35,14 +35,16 @@ class CommentsController extends PagingController<IComments> {
     return ["content"];
   }
 
-  addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
+  addUserRestirction(req: Request, res: Response): { [key: string]: any } {
     return { sender: res.locals.userId };
   }
 
   getPopulatedFields() {
-    return new Map<string, string>([
-      ["sender", "username avatarUrl"],
-    ]);
+    return new Map<string, string>([["sender", "username avatarUrl"]]);
+  }
+
+  getLimit(): number {
+    return Infinity;
   }
 }
 
