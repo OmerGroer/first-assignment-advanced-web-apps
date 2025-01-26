@@ -41,7 +41,7 @@ class BaseController<T> {
     const likeValue = req.query.like
 
     if (likeValue) { 
-      return {$or: this.getLikeFields().map(field => ({[field]: {$regex: likeValue}}))};
+      return {$or: this.getLikeFields().map(field => ({[field]: {$regex: likeValue, $options: 'i'}}))};
     } else{
       return null;
     }
