@@ -5,6 +5,14 @@ class RestaurantController extends PagingController<IRestaurant> {
   constructor() {
     super(restaurantModel);
   }
+
+  getLimit(): number {
+    return Number(process.env.LIMIT_DOCUMENTS_RESTAURANT);
+  }
+
+  getLikeFields(): string[] {
+    return ["name", "category", "address"]
+  }
 }
 
 export default new RestaurantController();

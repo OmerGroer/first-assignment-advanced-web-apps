@@ -21,25 +21,43 @@ class BaseController<T> {
     this.update = this.update.bind(this);
   }
 
-  async getAll(req: Request, res: Response) {
-    try {
-      const filter: { [key: string]: any } = res.locals.additionalFilter || {};
-      for (const field of this.getFilterFields()) {
-        if (typeof field === "string") {
-          if (req.query[field]) filter[field] = req.query[field];
-        } else {
-          const value = req.query[field.key];
-          if (typeof value === "string") {
-            filter[field.key] = field.value(value);
-          }
+  private getFilter(req: Request, res: Response) {
+    const filter: { [key: string]: any } = res.locals.additionalFilter || {};
+    for (const field of this.getFilterFields()) {
+      if (typeof field === "string") {
+        if (req.query[field]) filter[field] = req.query[field];
+      } else {
+        const value = req.query[field.key];
+        if (typeof value === "string") {
+          filter[field.key] = field.value(value);
         }
       }
+    }
+
+    return filter;
+  }
+
+  private getLikeFilter(req: Request, res: Response) {
+    const likeValue = req.query.like
+
+    if (likeValue) { 
+      return {$or: this.getLikeFields().map(field => ({[field]: {$regex: likeValue}}))};
+    } else{
+      return null;
+    }
+  }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      const filter = this.getFilter(req, res);
+      const likeFilter = this.getLikeFilter(req, res);
+      const mergedFilter = likeFilter ? {$and : [filter, likeFilter]} : filter
 
       const getItems = async () => {
         const limit = this.getLimit();
         const pipline = this.getAggregatePipeline(req, res);
         if (pipline.length > 0) {
-          pipline.unshift({ $match: filter as RootFilterQuery<T> });
+          pipline.unshift({ $match: mergedFilter as RootFilterQuery<T> });
           pipline.push({ $sort: { creationTime: -1 } });
           if (limit !== Infinity) {
             pipline.push({ $limit: limit });
@@ -47,7 +65,7 @@ class BaseController<T> {
           return await this.model.aggregate(pipline);
         } else {
           let query = this.model
-            .find(filter as RootFilterQuery<T>)
+            .find(mergedFilter as RootFilterQuery<T>)
             .sort({ creationTime: -1 });
           if (limit !== Infinity) {
             query = query.limit(limit);
@@ -90,6 +108,10 @@ class BaseController<T> {
   }
 
   getFilterFields(): (string | { key: string; value: (key: string) => any })[] {
+    return [];
+  }
+
+  getLikeFields(): string[] {
     return [];
   }
 

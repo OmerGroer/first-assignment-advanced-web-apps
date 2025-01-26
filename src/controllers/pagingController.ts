@@ -45,10 +45,6 @@ class PagingController<T extends IPagingModel> extends BaseController<T> {
 
     return {min, max}
   }
-
-  getLimit(): number {
-    return Number(process.env.LIMIT_DOCUMENTS);
-  }
 }
 
 export default PagingController;
