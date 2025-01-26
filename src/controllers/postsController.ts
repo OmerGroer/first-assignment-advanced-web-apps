@@ -3,6 +3,8 @@ import { Request, Response } from "express";
 import restaurantModel from "../models/restaurantsModel";
 import { Types } from "mongoose";
 import PagingController from "./pagingController";
+import likesModel from "../models/likesModel";
+import commentsModel from "../models/commentsModel";
 
 class PostsController extends PagingController<IPost> {
     constructor() {
@@ -192,6 +194,8 @@ class PostsController extends PagingController<IPost> {
         }
       ]);
       await restaurantModel.deleteOne({ _id: item.restaurant, ratingCount: 0 });
+      await likesModel.deleteMany({postId: req.params.id});
+      await commentsModel.deleteMany({postId: req.params.id});
     }
 
     getLimit(): number {

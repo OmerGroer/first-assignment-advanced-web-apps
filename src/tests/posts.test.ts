@@ -5,6 +5,7 @@ import postModel, { IPost } from "../models/postsModel";
 import { Express } from "express";
 import userModel, { IUser } from "../models/usersModel";
 import restaurantModel, { IRestaurant } from "../models/restaurantsModel";
+import commentsModel from "../models/commentsModel";
 
 var app: Express;
 var request: Agent;
@@ -15,6 +16,7 @@ beforeAll(async () => {
   await postModel.deleteMany();
   await userModel.deleteMany();
   await restaurantModel.deleteMany();
+  await commentsModel.deleteMany();
 
   await supertest(app).post("/auth/register").send(testUser);
   const res = await supertest(app).post("/auth/login").send(testUser);
@@ -324,6 +326,15 @@ describe("Posts Tests", () => {
   });
 
   test("Test Delete Post", async () => {
+    const responseComment = await request.post("/comments").send({
+      content: "This is a comment",
+      postId: postId,
+    });
+    expect(responseComment.statusCode).toBe(201);
+    const responseComment2 = await request.get(`/comments?postId=${postId}`);
+    expect(responseComment2.statusCode).toBe(200);
+    expect(responseComment2.body.data.length).toBe(1);
+
     const response = await request.delete(`/posts/${postId}`);
     expect(response.statusCode).toBe(200);
     assertPost(response.body);
@@ -334,6 +345,10 @@ describe("Posts Tests", () => {
     const response3 = await request.get(`/restaurants/${post.restaurant}`);
     expect(response3.statusCode).toBe(404);
     expect(response3.text).toBe("not found");
+
+    const responseComment3 = await request.get(`/comments?postId=${postId}`);
+    expect(responseComment3.statusCode).toBe(200);
+    expect(responseComment3.body.data.length).toBe(0);
   });
 
   test("Test get post by id that doesn't exist", async () => {
