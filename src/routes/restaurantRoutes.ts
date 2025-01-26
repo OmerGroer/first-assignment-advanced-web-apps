@@ -82,6 +82,12 @@ router.use(authMiddleware);
  *           type: string
  *         required: false
  *         description: The highest date of user I have to get more recent users
+ *       - in: query
+ *         name: like
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Searching substring in name or category or address
  *     responses:
  *       200:
  *         description: A list of restaurants
@@ -96,6 +102,9 @@ router.use(authMiddleware);
  *                 max:
  *                   type: string
  *                   example: "2025-01-22T14:04:07.120Z"
+ *                 like:
+ *                   type: string
+ *                   example: Italian
  *                 data:
  *                   type: array
  *                   items:

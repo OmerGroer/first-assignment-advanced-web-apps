@@ -28,7 +28,7 @@ class CommentsController extends PagingController<IComments> {
   }
 
   getFilterFields() {
-    return [...super.getFilterFields(), "sender", "postId"];
+    return ["sender", "postId"];
   }
 
   getUpdateFields() {
@@ -44,7 +44,7 @@ class CommentsController extends PagingController<IComments> {
   }
 
   getLimit(): number {
-    return Infinity;
+    return Number(process.env.LIMIT_DOCUMENTS_COMMENT) || Infinity;
   }
 }
 

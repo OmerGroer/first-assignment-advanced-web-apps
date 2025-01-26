@@ -148,7 +148,7 @@ class UsersController extends PagingController<IUser> {
   }
 
   getFilterFields() {
-    return [...super.getFilterFields(), "username", "email"];
+    return ["username", "email"];
   }
 
   getUpdateFields() {
@@ -247,6 +247,14 @@ class UsersController extends PagingController<IUser> {
     } catch (err) {
       res.status(400).send("fail");
     }
+  }
+
+  getLimit(): number {
+    return Number(process.env.LIMIT_DOCUMENTS_USER);
+  }
+
+  getLikeFields(): string[] {
+    return ["username"]
   }
 }
 

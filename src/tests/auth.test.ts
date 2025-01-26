@@ -169,7 +169,7 @@ describe("Auth Tests", () => {
       .post("/auth/login")
       .send({ username: "HI", password: user.password });
     expect(response.statusCode).toBe(400);
-    expect(response.text).toBe("wrong username/email or password");
+    expect(response.text).toBe("Wrong username/email or password");
   });
 
   test("Login with not existing email", async () => {
@@ -177,7 +177,7 @@ describe("Auth Tests", () => {
       .post("/auth/login")
       .send({ email: "HI", password: user.password });
     expect(response.statusCode).toBe(400);
-    expect(response.text).toBe("wrong username/email or password");
+    expect(response.text).toBe("Wrong username/email or password");
   });
 
   test("Login with not matching password", async () => {
@@ -185,13 +185,13 @@ describe("Auth Tests", () => {
       .post("/auth/login")
       .send({ email: user.email, password: "no" });
     expect(response.statusCode).toBe(400);
-    expect(response.text).toBe("wrong username/email or password");
+    expect(response.text).toBe("Wrong username/email or password");
   });
 
   test("Login with nothing", async () => {
     const response = await request.post("/auth/login").send({});
     expect(response.statusCode).toBe(400);
-    expect(response.text).toBe("wrong username/email or password");
+    expect(response.text).toBe("Wrong username/email or password");
   });
 
   test("Auth test without token", async () => {

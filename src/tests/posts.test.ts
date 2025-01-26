@@ -400,15 +400,6 @@ describe("Posts Tests", () => {
     let min = response.body.min
     let max = response.body.max
 
-    const responseRestaurant = await request.get("/restaurants");
-    expect(responseRestaurant.statusCode).toBe(200);
-    expect(responseRestaurant.body.data.length).toBe(2);
-    expect(responseRestaurant.body.data[0]._id).toBe("3")
-    expect(responseRestaurant.body.data[1]._id).toBe("2")
-    assertRestaurantHelper(responseRestaurant.body.data[1], 1, 3)
-    let minRestaurant = responseRestaurant.body.min
-    let maxRestaurant = responseRestaurant.body.max
-
     const response2 = await request.get(`/posts?min=${min}&max=${max}`);
     expect(response2.statusCode).toBe(200);
     expect(response2.body.data.length).toBe(1);
@@ -416,34 +407,16 @@ describe("Posts Tests", () => {
     min = response2.body.min
     max = response2.body.max
 
-    const responseRestaurant2 = await request.get(`/restaurants?min=${minRestaurant}&max=${maxRestaurant}`);
-    expect(responseRestaurant2.statusCode).toBe(200);
-    expect(responseRestaurant2.body.data.length).toBe(1);
-    expect(responseRestaurant2.body.data[0]._id).toBe("1")
-    minRestaurant = responseRestaurant2.body.min
-    maxRestaurant = responseRestaurant2.body.max
-
     const response3 = await request.get(`/posts?min=${min}&max=${max}`);
     expect(response3.statusCode).toBe(200);
     expect(response3.body.data.length).toBe(0);
     expect(response3.body.min).toBe(min)
     expect(response3.body.max).toBe(max)
 
-    const responseRestaurant3 = await request.get(`/restaurants?min=${minRestaurant}&max=${maxRestaurant}`);
-    expect(responseRestaurant3.statusCode).toBe(200);
-    expect(responseRestaurant3.body.data.length).toBe(0);
-    expect(responseRestaurant3.body.min).toBe(minRestaurant)
-    expect(responseRestaurant3.body.max).toBe(maxRestaurant)
-
     const fourthId = (await createPost({...post, restaurant: "4"}, {...testRestaurant, _id: "4"})).body._id;
     const response4 = await request.get(`/posts?min=${min}&max=${max}`);
     expect(response4.statusCode).toBe(200);
     expect(response4.body.data.length).toBe(1);
     expect(response4.body.data[0]._id).toBe(fourthId)
-
-    const responseRestaurant4 = await request.get(`/restaurants?min=${minRestaurant}&max=${maxRestaurant}`);
-    expect(responseRestaurant4.statusCode).toBe(200);
-    expect(responseRestaurant4.body.data.length).toBe(1);
-    expect(responseRestaurant4.body.data[0]._id).toBe("4")
   });
 });

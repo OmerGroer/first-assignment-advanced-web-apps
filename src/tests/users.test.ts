@@ -196,9 +196,9 @@ describe("Users Tests", () => {
   test("Test User Pagination", async () => {
     await userModel.deleteMany();
 
-    const firstId = (await request.post("/auth/register").send({...user, username: "1", email: "1"})).body._id;
-    const secondId = (await request.post("/auth/register").send({...user, username: "2", email: "2"})).body._id;
-    const thirdId = (await request.post("/auth/register").send({...user, username: "3", email: "3"})).body._id;
+    const firstId = (await request.post("/auth/register").send({...user, username: "a1", email: "1"})).body._id;
+    const secondId = (await request.post("/auth/register").send({...user, username: "a2", email: "2"})).body._id;
+    const thirdId = (await request.post("/auth/register").send({...user, username: "a3", email: "3"})).body._id;
 
     const response = await request.get("/users");
     expect(response.statusCode).toBe(200);
@@ -221,10 +221,31 @@ describe("Users Tests", () => {
     expect(response3.body.min).toBe(min)
     expect(response3.body.max).toBe(max)
 
-    const fourthId = (await request.post("/auth/register").send({...user, username: "4", email: "4"})).body._id;
+    const fourthId = (await request.post("/auth/register").send({...user, username: "a4", email: "4"})).body._id;
     const response4 = await request.get(`/users?min=${min}&max=${max}`);
     expect(response4.statusCode).toBe(200);
     expect(response4.body.data.length).toBe(1);
     expect(response4.body.data[0]._id).toBe(fourthId)
+  });
+
+  test("Like name value", async () => {
+    const response = await request.get("/users?like=a");
+    expect(response.statusCode).toBe(200);
+    expect(response.body.data.length).toBe(2);
+    expect(response.body.data[0].username).toBe("a4")
+    expect(response.body.data[1].username).toBe("a3")
+    let min = response.body.min
+    let max = response.body.max
+
+    const response2 = await request.get(`/users?like=a&min=${min}&max=${max}`);
+    expect(response2.statusCode).toBe(200);
+    expect(response2.body.data.length).toBe(2);
+    expect(response2.body.data[0].username).toBe("a2")
+    expect(response2.body.data[1].username).toBe("a1")
+
+    const response3 = await request.get("/users?like=3");
+    expect(response3.statusCode).toBe(200);
+    expect(response3.body.data.length).toBe(1);
+    expect(response3.body.data[0].username).toBe("a3")
   });
 });

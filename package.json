@@ -11,6 +11,7 @@
     "testPost": "jest --detectOpenHandles --forceExit --runInBand posts.test.ts",
     "testComment": "jest --detectOpenHandles --forceExit --runInBand comments.test.ts",
     "testUser": "jest --detectOpenHandles --forceExit --runInBand users.test.ts",
+    "testRestaurant": "jest --detectOpenHandles --forceExit --runInBand restaurants.test.ts",
     "testFile": "jest --detectOpenHandles --forceExit file.test.ts",
     "lint": "eslint . --ext .ts"
   },

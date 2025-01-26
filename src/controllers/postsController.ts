@@ -93,7 +93,7 @@ class PostsController extends PagingController<IPost> {
     }
 
     getFilterFields() {
-      return [...super.getFilterFields(), {key: "sender", value: (key: string) => new Types.ObjectId(key)}, "restaurant"];
+      return [{key: "sender", value: (key: string) => new Types.ObjectId(key)}, "restaurant"];
     }
 
     getUpdateFields() {
@@ -192,6 +192,10 @@ class PostsController extends PagingController<IPost> {
         }
       ]);
       await restaurantModel.deleteOne({ _id: item.restaurant, ratingCount: 0 });
+    }
+
+    getLimit(): number {
+      return Number(process.env.LIMIT_DOCUMENTS_POST);
     }
   }
 
