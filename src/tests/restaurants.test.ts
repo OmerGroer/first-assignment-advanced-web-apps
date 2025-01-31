@@ -16,8 +16,7 @@ beforeAll(async () => {
   await userModel.deleteMany();
   await restaurantModel.deleteMany();
 
-  await supertest(app).post("/auth/register").send(testUser);
-  const res = await supertest(app).post("/auth/login").send(testUser);
+  const res = await supertest(app).post("/auth/register").send(testUser);
   senderId = res.body._id;
   const token = res.body.accessToken;
   expect(token).toBeDefined();

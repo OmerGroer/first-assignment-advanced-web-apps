@@ -37,14 +37,13 @@ const user: User = {
 describe("Auth Tests", () => {
   test("Test Create User", async () => {
     const response = await request.post("/auth/register").send(user);
-    expect(response.statusCode).toBe(201);
-    expect(response.body.username).toBe(user.username);
-    expect(response.body.email).toBe(user.email);
-    const validPassword = await bcrypt.compare(
-      user.password,
-      response.body.password
-    );
-    expect(validPassword).toBe(true);
+    expect(response.statusCode).toBe(200);
+    const accessToken = response.body.accessToken;
+    const refreshToken = response.body.refreshToken;
+    expect(accessToken).toBeDefined();
+    expect(refreshToken).toBeDefined();
+    user.accessToken = accessToken;
+    user.refreshToken = refreshToken;
     user._id = response.body._id;
   });
 
@@ -53,7 +52,7 @@ describe("Auth Tests", () => {
       .post("/auth/register")
       .send({ ...user, username: "1" });
     expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe("Duplicate Key");
+    expect(response.body.message).toBe("Duplicate email or username");
   });
 
   test("Test Create User with duplicate username", async () => {
@@ -61,7 +60,7 @@ describe("Auth Tests", () => {
       .post("/auth/register")
       .send({ ...user, email: "1" });
     expect(response.statusCode).toBe(400);
-    expect(response.body.message).toBe("Duplicate Key");
+    expect(response.body.message).toBe("Duplicate email or username");
   });
 
   test("Test Create user without username", async () => {

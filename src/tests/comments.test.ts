@@ -18,8 +18,7 @@ beforeAll(async () => {
   await restaurantModel.deleteMany();
   await userModel.deleteMany();
 
-  await supertest(app).post("/auth/register").send(testUser);
-  const res = await supertest(app).post("/auth/login").send(testUser);
+  const res = await supertest(app).post("/auth/register").send(testUser);
   senderId = res.body._id;
   const token = res.body.accessToken;
   expect(token).toBeDefined();
@@ -228,8 +227,7 @@ describe("Comments Tests", () => {
       password: "secret",
       avatarUrl: "/public/avatar.png"
     };
-    await supertest(app).post("/auth/register").send(testUser);
-    const res = await supertest(app).post("/auth/login").send(testUser);
+    const res = await supertest(app).post("/auth/register").send(testUser);
     const token = res.body.accessToken;
     expect(token).toBeDefined();
     const localRequest = supertest

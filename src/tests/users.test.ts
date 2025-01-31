@@ -13,8 +13,7 @@ beforeAll(async () => {
   app = await initApp();
   await userModel.deleteMany();
 
-  await supertest(app).post("/auth/register").send(user);
-  const res = await supertest(app).post("/auth/login").send(user);
+  const res = await supertest(app).post("/auth/register").send(user);
   userId = res.body._id;
   const token = res.body.accessToken;
   expect(token).toBeDefined();
