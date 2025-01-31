@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Document } from "mongoose";
 import PagingController from "./pagingController";
+import { OAuth2Client } from "google-auth-library";
 
 type Payload = {
   _id: string;
@@ -49,6 +50,30 @@ const generateToken = (userId: string): tTokens | null => {
     accessToken: accessToken,
     refreshToken: refreshToken,
   };
+};
+
+const returnTokens = async (
+  res: Response,
+  userId: string,
+  user: Document & IUser
+) => {
+  const tokens = generateToken(userId);
+  if (!tokens) {
+    res.status(500).send("Server Error");
+    return;
+  }
+
+  if (!user.refreshToken) {
+    user.refreshToken = [];
+  }
+  user.refreshToken.push(tokens.refreshToken);
+  await user.save();
+
+  res.status(200).send({
+    accessToken: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+    _id: userId,
+  });
 };
 
 const verifyRefreshToken = (refreshToken: string | undefined) => {
@@ -109,12 +134,17 @@ const verifyRefreshToken = (refreshToken: string | undefined) => {
 };
 
 class UsersController extends PagingController<IUser> {
+  client: OAuth2Client;
+
   constructor() {
     super(userModel);
 
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
     this.refresh = this.refresh.bind(this);
+    this.googleSignin = this.googleSignin.bind(this);
+
+    this.client = new OAuth2Client();
   }
 
   async create(req: Request, res: Response) {
@@ -126,8 +156,48 @@ class UsersController extends PagingController<IUser> {
         req.body.password = hashedPassword;
       }
 
-      await super.create(req, res);
-    } catch (error) {
+      const body = req.body;
+      const user = await this.model.create(body);
+      await returnTokens(res, user._id, user);
+    } catch (error: any) {
+      if (error.code === 11000) {
+        error = { message: "Duplicate email or username" };
+      } else {
+        error = { message: error.message };
+      }
+
+      res.status(400).send(error);
+    }
+  }
+
+  async googleSignin(req: Request, res: Response) {
+    const credential = req.body.credential;
+    try {
+      const ticket = await this.client.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+
+      const email = payload?.email;
+      let user = await this.model.findOne({ email });
+      if (user == null) {
+        user = await this.model.create({
+          email: email,
+          username: payload?.name,
+          avatarUrl: payload?.picture,
+          password: "google-signin",
+        });
+      }
+
+      await returnTokens(res, user._id, user);
+    } catch (error: any) {
+      if (error.code === 11000) {
+        error = { message: "Duplicate email or username" };
+      } else {
+        error = { message: error.message };
+      }
+
       res.status(400).send(error);
     }
   }
@@ -155,7 +225,7 @@ class UsersController extends PagingController<IUser> {
     return ["username", "email", "password", "avatarUrl"];
   }
 
-  addUserRestirction(req: Request, res: Response): { [key: string]: any; } {
+  addUserRestirction(req: Request, res: Response): { [key: string]: any } {
     return { _id: res.locals.userId };
   }
 
@@ -186,23 +256,7 @@ class UsersController extends PagingController<IUser> {
         return;
       }
 
-      const tokens = generateToken(user._id);
-      if (!tokens) {
-        res.status(500).send("Server Error");
-        return;
-      }
-
-      if (!user.refreshToken) {
-        user.refreshToken = [];
-      }
-      user.refreshToken.push(tokens.refreshToken);
-      await user.save();
-
-      res.status(200).send({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        _id: user._id,
-      });
+      await returnTokens(res, user._id, user);
     } catch (err) {
       res.status(400).send(err);
     }
@@ -227,23 +281,7 @@ class UsersController extends PagingController<IUser> {
         return;
       }
 
-      const tokens = generateToken(user._id);
-      if (!tokens) {
-        res.status(500).send("Server Error");
-        return;
-      }
-
-      if (!user.refreshToken) {
-        user.refreshToken = [];
-      }
-      user.refreshToken.push(tokens.refreshToken);
-      await user.save();
-
-      res.status(200).send({
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        _id: user._id,
-      });
+      await returnTokens(res, user._id, user);
     } catch (err) {
       res.status(400).send("fail");
     }
@@ -254,7 +292,7 @@ class UsersController extends PagingController<IUser> {
   }
 
   getLikeFields(): string[] {
-    return ["username"]
+    return ["username"];
   }
 }
 

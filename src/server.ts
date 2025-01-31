@@ -34,6 +34,9 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "*");
   next();
 });
+// app.use((req, res, next) => {
+//   setTimeout(next, 1000)
+// })
 app.use("/posts", postsRoute);
 app.use("/comments", commentsRoute);
 app.use("/users", userRoutes);

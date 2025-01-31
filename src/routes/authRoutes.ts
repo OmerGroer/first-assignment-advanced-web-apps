@@ -71,13 +71,66 @@ import usersController from "../controllers/usersController";
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 refreshToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 _id:
+ *                   type: string
+ *                   example: 60d0fe4f5311236168a109ca
  *       400:
  *         description: Invalid input
  *       500:
  *         description: Server error
  */
 router.post("/register", usersController.create);
+
+/**
+ * @swagger
+ * /auth/google:
+ *   post:
+ *     summary: Register a new user with google credentials
+ *     description: Create a new user with google credentials
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - credential
+ *             properties:
+ *               credential:
+ *                 type: string
+ *                 description: The credential of google user
+ *     responses:
+ *       200:
+ *         description: The new user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 refreshToken:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                 _id:
+ *                   type: string
+ *                   example: 60d0fe4f5311236168a109ca
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
+router.post("/google", usersController.googleSignin);
 
 /**
  * @swagger
