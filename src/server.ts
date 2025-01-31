@@ -1,10 +1,8 @@
 import dotenv from "dotenv";
 
-if (process.env.NODE_ENV == "test") {
-  dotenv.config({ path: ".env.test" });
-} else {
-  dotenv.config();
-}
+dotenv.config({
+  path: `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ""}`,
+});
 
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -23,11 +21,13 @@ import swaggerUI from "swagger-ui-express";
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({
-  origin: '*',
-  methods: '*',
-  allowedHeaders: '*'
-}));
+app.use(
+  cors({
+    origin: "*",
+    methods: "*",
+    allowedHeaders: "*",
+  })
+);
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
@@ -42,7 +42,9 @@ app.use("/auth", authRoutes);
 app.use("/file", fileRoute);
 app.use("/likes", likeRoues);
 app.use("/public", express.static("public"));
-app.use(express.static("front"));
+
+const frontEndpoints = ["/", "/new", "/search/restaurants", "/search/users", "/profile"]
+frontEndpoints.forEach(endpoint => app.use(endpoint, express.static("front")));
 
 const options = {
   definition: {
@@ -52,7 +54,12 @@ const options = {
       version: "1.0.0",
       description: "REST server including authentication using JWT",
     },
-    servers: [{ url: "http://localhost:3000", },],
+    servers: [
+      { url: `http://localhost:${process.env.PORT}` },
+      { url: "http://10.10.246.35" },
+      { url: "https://10.10.246.35" },
+      { url: "https://node35.cs.colman.ac.il" },
+    ],
   },
   apis: ["./src/routes/*.ts"],
 };
