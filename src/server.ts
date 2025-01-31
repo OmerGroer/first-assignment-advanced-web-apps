@@ -42,7 +42,9 @@ app.use("/auth", authRoutes);
 app.use("/file", fileRoute);
 app.use("/likes", likeRoues);
 app.use("/public", express.static("public"));
-app.use(express.static("front"));
+
+const frontEndpoints = ["/", "/new", "/search/restaurants", "/search/users", "/profile"]
+frontEndpoints.forEach(endpoint => app.use(endpoint, express.static("front")));
 
 const options = {
   definition: {
